@@ -21,3 +21,8 @@ class MissingActorAttributeError(LeappError):
 class WrongAttributeTypeError(LeappError):
     def __init__(self, message):
         super(WrongAttributeTypeError, self).__init__(message)
+
+
+class ModelDefinitionError(LeappError):
+    def __init__(self, message):
+        super(ModelDefinitionError, self).__init__(message)

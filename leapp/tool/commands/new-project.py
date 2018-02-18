@@ -11,7 +11,9 @@ def cli(name):
     basedir = os.path.join('.', name)
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
-        with open(os.path.join(basedir, '.leapp'), 'w') as f:
+        project_dir = os.path.join(basedir, '.leapp')
+        os.mkdir(project_dir)
+        with open(os.path.join(project_dir, 'info'), 'w') as f:
             json.dump({
                 'name': name,
                 'channel_data': {}

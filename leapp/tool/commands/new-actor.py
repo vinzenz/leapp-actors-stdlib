@@ -2,7 +2,7 @@ import os
 
 import click
 
-from leapp.tool.utils import find_project_basedir
+from leapp.tool.utils import find_project_basedir, make_class_name, make_name
 
 
 @click.command('new-actor')
@@ -22,10 +22,10 @@ def cli(actor_name):
 class {actor_class}(Actor):
     name = '{actor_name}'
     description = 'For the actor {actor_name} has been no description provided.'
-    inputs = ()
-    outputs = ()
+    input_channels = ()
+    output_channels = ()
     tags = ()
 
     def process(self):
         pass
-'''.format(actor_class=actor_name[0].upper() + actor_name[1:], actor_name=actor_name.lower()))
+'''.format(actor_class=make_class_name(actor_name), actor_name=make_name(actor_name)))

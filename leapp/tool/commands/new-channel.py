@@ -2,7 +2,7 @@ import os
 
 import click
 
-from leapp.tool.utils import find_project_basedir
+from leapp.tool.utils import find_project_basedir, make_name, make_class_name
 
 
 @click.command('new-channel')
@@ -19,7 +19,7 @@ def cli(channel_name):
         f.write('''from leapp.channels import Channel
 
 
-class {channel_name}(Channel):
+class {channel_name}Channel(Channel):
     name = '{channel}'
-    items = ()
-'''.format(channel_name=channel_name[0].upper() + channel_name[1:], channel=channel_name.lower()))
+    messages = ()
+'''.format(channel_name=make_class_name(channel_name), channel=make_name(channel_name)))

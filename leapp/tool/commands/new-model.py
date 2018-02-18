@@ -2,7 +2,7 @@ import os
 
 import click
 
-from leapp.tool.utils import find_project_basedir
+from leapp.tool.utils import find_project_basedir, make_class_name
 
 
 @click.command('new-model')
@@ -20,4 +20,4 @@ def cli(model_name):
 
 class {model_name}(Model):
     pass
-'''.format(model_name=model_name[0].upper() + model_name[1:]))
+'''.format(model_name=make_class_name(model_name)))
