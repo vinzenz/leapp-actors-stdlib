@@ -24,10 +24,5 @@ def get_channels():
         channel_messages = getattr(channel, 'messages', None)
         if not channel_messages:
             setattr(channel, 'messages', ())
-    #        raise InvalidChannelDefinitionError('Channel {} must have at least one message model'.format(channel))
 
-    #    models = get_flattened_subclasses(Model)
-    #    for message in channel_messages:
-    #        if message not in models:
-    #            raise InvalidChannelItemError('Message {} on channel {} is not a valid Model'.format(message, channel))
     return channels

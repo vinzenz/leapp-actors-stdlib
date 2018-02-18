@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
@@ -9,9 +10,14 @@ class Actor(object):
     def produce(self, *args):
         for arg in args:
             if isinstance(arg, getattr(self.__class__, 'produces')):
-                print json.dumps({arg.channel.name: [arg.__schema__().dump(arg).data]}, indent=2)
+                print json.dumps({arg.channel.name: {
+                    'type': arg.__class__.__name__,
+                    'actor': self.name,
+                    'time': datetime.datetime.utcnow().isoformat() + 'Z',
+                    'message': arg.__schema__().dump(arg).data
+                }}, indent=2)
 
-    def inputs(self):
+    def consume(self, *types):
         return ()
 
 

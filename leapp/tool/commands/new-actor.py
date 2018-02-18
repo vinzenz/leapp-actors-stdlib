@@ -15,6 +15,10 @@ def cli(actor_name):
     basedir = os.path.join(basedir, 'actors')
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
+
+    if os.path.exists(os.path.join(basedir, actor_name.lower() + '.py')):
+        raise click.UsageError("File already exists")
+
     with open(os.path.join(basedir, actor_name.lower() + '.py'), 'w') as f:
         f.write('''from leapp.actors import Actor
 
@@ -22,8 +26,8 @@ def cli(actor_name):
 class {actor_class}(Actor):
     name = '{actor_name}'
     description = 'For the actor {actor_name} has been no description provided.'
-    input_channels = ()
-    output_channels = ()
+    consumes = ()
+    produces = ()
     tags = ()
 
     def process(self):

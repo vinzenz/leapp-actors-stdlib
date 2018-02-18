@@ -1,5 +1,6 @@
 from marshmallow import Schema
 from marshmallow.fields import Field
+from marshmallow.utils import missing
 from . import fields
 
 from leapp.exceptions import ModelDefinitionError
@@ -37,7 +38,11 @@ class Model(object):
     def __init__(self, *args, **kwargs):
         super(Model, self).__init__()
         for field in self.__class__.fields.keys():
-            setattr(self, field, kwargs.get(field, None))
+            # Default value support from Marshmallow uses 'missing' if it is not set
+            value = kwargs.get(field, self.__class__.fields[field].default)
+            if value is missing:
+                value = None
+            setattr(self, field, value)
 
     def dump(self):
         return self.__schema__().dump(self).data

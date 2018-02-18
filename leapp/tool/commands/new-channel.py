@@ -15,11 +15,14 @@ def cli(channel_name):
     basedir = os.path.join(basedir, 'channels')
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
+
+    if os.path.exists(os.path.join(basedir, channel_name.lower() + '.py')):
+        raise click.UsageError("File already exists")
+
     with open(os.path.join(basedir, channel_name.lower() + '.py'), 'w') as f:
         f.write('''from leapp.channels import Channel
 
 
 class {channel_name}Channel(Channel):
     name = '{channel}'
-    messages = ()
 '''.format(channel_name=make_class_name(channel_name), channel=make_name(channel_name)))

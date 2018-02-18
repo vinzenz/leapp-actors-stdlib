@@ -14,10 +14,13 @@ def cli(model_name):
     basedir = os.path.join(basedir, 'models')
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
+    if os.path.exists(os.path.join(basedir, model_name.lower() + '.py')):
+        raise click.UsageError("File already exists")
+
     with open(os.path.join(basedir, model_name.lower() + '.py'), 'w') as f:
         f.write('''from leapp.models import Model, fields
 
 
 class {model_name}(Model):
-    pass
+    channel = None #  TODO: import appropriate channel and set it here
 '''.format(model_name=make_class_name(model_name)))
