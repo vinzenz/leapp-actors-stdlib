@@ -18,11 +18,11 @@ def load_modules(pkg_path):
 
 def load_modules_from(path):
     if os.path.exists(path):
-        for root, dirs, files in os.walk(path):
-            if load_modules(path):
-                continue
+        if load_modules(path):
+            return
+        for _, dirs, _ in os.walk(path):
             for directory in dirs:
-                load_modules(os.path.join(root, directory))
+                load_modules(os.path.join(path, directory))
 
 
 @click.command('run')
