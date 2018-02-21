@@ -1,3 +1,5 @@
+import sys
+
 from marshmallow import Schema
 from marshmallow.fields import Field
 from marshmallow.utils import missing
@@ -5,7 +7,7 @@ from . import fields
 
 from leapp.exceptions import ModelDefinitionError
 from leapp.utils.meta import get_flattened_subclasses
-from leapp.channels import Channel, ErrorChannel
+from leapp.channels import OutputOnlyChannel, ErrorChannel
 
 
 class ModelMeta(type):
@@ -15,16 +17,19 @@ class ModelMeta(type):
         # Every model has to be bound to a channel
         if klass.__name__ != 'Model' and issubclass(klass, Model):
             channel = getattr(klass, 'channel', None)
-            if not channel or not issubclass(channel, Channel):
+            if not channel or not issubclass(channel, OutputOnlyChannel):
                 raise ModelDefinitionError('Missing channel in Model {}'.format(name))
+            channel.messages = tuple(set(channel.messages + (klass,)))
+
+        kls_attrs = {name: value for name, value in attrs.items() if isinstance(value, Field)}
+        klass.fields = kls_attrs.copy()
 
         # This allows to declare a custom schema or use the generated one from the Model based on marshmallow fields
         if '__schema__' not in klass.__dict__.keys():
-            kls_attrs = {name: value for name, value in attrs.items() if isinstance(value, Field)}
-            klass.fields = kls_attrs.copy()
             kls_attrs['__model__'] = klass
             setattr(klass, '__schema__', type(klass.__name__ + 'Schema', (Schema,), kls_attrs))
 
+        setattr(sys.modules[mcs.__module__], name, klass)
         return klass
 
     def __init__(cls, name, bases, attrs):
