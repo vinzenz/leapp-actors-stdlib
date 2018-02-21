@@ -1,6 +1,31 @@
 import json
 import os
+import pkgutil
 import re
+
+
+def load_modules(pkg_path):
+    modules = []
+    for importer, name, is_pkg in pkgutil.iter_modules([pkg_path]):
+        if is_pkg:
+            continue
+        modules.append(importer.find_module(name).load_module(name))
+    return modules
+
+
+def load_modules_from(path):
+    if os.path.exists(path):
+        if load_modules(path):
+            return
+        for root, _, _ in os.walk(path):
+            if load_modules(root):
+                return
+
+
+def load_all_from(basedir):
+    for directory in ('channels', 'models', 'actors'):  # Order is NOT arbitrary - keep the order
+        modules_dir = os.path.join(basedir, directory)
+        load_modules_from(modules_dir)
 
 
 def make_class_name(name):

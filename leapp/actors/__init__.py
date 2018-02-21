@@ -7,17 +7,23 @@ from leapp.models import Model
 
 
 class Actor(object):
+    def __init__(self, channels=None):
+        self._channels = channels
+
     def produce(self, *args):
-        for arg in args:
-            if isinstance(arg, getattr(self.__class__, 'produces')):
-                print json.dumps({arg.channel.name: {
-                    'type': arg.__class__.__name__,
-                    'actor': self.name,
-                    'time': datetime.datetime.utcnow().isoformat() + 'Z',
-                    'message': arg.__schema__().dump(arg).data
-                }}, indent=2)
+        if self._channels:
+            for arg in args:
+                if isinstance(arg, getattr(self.__class__, 'produces')):
+                    self._channels.produce(arg.channel.name, {
+                        'type': arg.__class__.__name__,
+                        'actor': self.name,
+                        'time': datetime.datetime.utcnow().isoformat() + 'Z',
+                        'message': arg.__schema__().dump(arg).data
+                    })
 
     def consume(self, *types):
+        if self._channels:
+            return self._channels.consume(*types)
         return ()
 
 
