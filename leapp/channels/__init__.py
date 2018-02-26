@@ -1,7 +1,7 @@
 import sys
 
 from leapp.exceptions import InvalidChannelDefinitionError
-from leapp.utils.meta import get_flattened_subclasses
+from leapp.utils.meta import get_flattened_subclasses, with_metaclass
 
 
 class ChannelMeta(type):
@@ -12,8 +12,8 @@ class ChannelMeta(type):
         return klass
 
 
-class OutputOnlyChannel(object):
-    __metaclass__ = ChannelMeta
+class OutputOnlyChannel(with_metaclass(ChannelMeta)):
+    pass
 
 
 class Channel(OutputOnlyChannel):

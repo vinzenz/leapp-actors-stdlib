@@ -1,24 +1,42 @@
 import datetime
+import hashlib
 import json
+import logging
+
+import six
 
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
-from leapp.utils.meta import get_flattened_subclasses
+from leapp.utils.meta import get_flattened_subclasses, with_metaclass
 from leapp.models import Model
+from leapp.tags import Tag
 
 
-class Actor(object):
+class ActorMeta(type):
+    def __new__(mcs, *args, **kwargs):
+        klass = super(ActorMeta, mcs).__new__(mcs, *args, **kwargs)
+        for tag in getattr(klass, 'tags', ()):
+            tag.actors = tuple(set(tag.actors + (klass,)))
+        return klass
+
+
+class Actor(with_metaclass(ActorMeta)):
     def __init__(self, channels=None):
         self._channels = channels
+        self.log = logging.getLogger('leapp.actor').getChild(self.__class__.name)
 
     def produce(self, *args):
         if self._channels:
             for arg in args:
                 if isinstance(arg, getattr(self.__class__, 'produces')):
+                    message = arg.__schema__().dump(arg).data
+                    message_id = hashlib.sha256(json.dumps(message)).hexdigest()
                     self._channels.produce(arg.channel.name, {
                         'type': arg.__class__.__name__,
                         'actor': self.name,
+                        'channel': arg.channel.name,
                         'time': datetime.datetime.utcnow().isoformat() + 'Z',
-                        'message': arg.__schema__().dump(arg).data
+                        'message': message,
+                        'id': message_id
                     })
 
     def consume(self, *types):
@@ -48,9 +66,16 @@ def _is_tuple_of(value_type):
 
 def _is_model_tuple(actor, name, value):
     _is_type(tuple)(actor, name, value)
-    if not all([True] + map(lambda item: issubclass(item, Model), value)):
+    if not all([True] + list(map(lambda item: isinstance(item, type) and issubclass(item, Model), value))):
         raise WrongAttributeTypeError(
             'Actor {} attribute {} should contain only Models'.format(actor, name))
+
+
+def _is_tag_tuple(actor, name, value):
+    _is_type(tuple)(actor, name, value)
+    if not all([True] + list(map(lambda item: isinstance(item, type) and issubclass(item, Tag), value))):
+        raise WrongAttributeTypeError(
+            'Actor {} attribute {} should contain only Tags'.format(actor, name))
 
 
 def _get_attribute(actor, name, validator, required=False, default_value=None):
@@ -65,11 +90,11 @@ def _get_attribute(actor, name, validator, required=False, default_value=None):
 
 def get_actor_metadata(actor):
     return dict([
-        _get_attribute(actor, 'name', _is_type((str, unicode)), required=True),
-        _get_attribute(actor, 'tags', _is_tuple_of((str, unicode)), required=True),
+        _get_attribute(actor, 'name', _is_type(six.string_types), required=True),
+        _get_attribute(actor, 'tags', _is_tag_tuple, required=True),
         _get_attribute(actor, 'consumes', _is_model_tuple, required=False),
         _get_attribute(actor, 'produces', _is_model_tuple, required=False),
-        _get_attribute(actor, 'description', _is_type((str, unicode)), required=False,
+        _get_attribute(actor, 'description', _is_type(six.string_types), required=False,
                        default_value='There has been no description provided for this actor')
     ])
 

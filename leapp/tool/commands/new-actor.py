@@ -2,15 +2,14 @@ import os
 
 import click
 
-from leapp.tool.utils import find_project_basedir, make_class_name, make_name
+from leapp.tool.utils import find_project_basedir, make_class_name, make_name, requires_project
 
 
 @click.command('new-actor')
 @click.argument('actor-name')
+@requires_project
 def cli(actor_name):
     basedir = find_project_basedir('.')
-    if not basedir:
-        raise click.UsageError('This command must be executed from the project directory')
 
     actors_dir = os.path.join(basedir, 'actors')
     if not os.path.isdir(actors_dir):

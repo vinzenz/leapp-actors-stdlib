@@ -5,8 +5,9 @@ import sys
 
 import click
 
+from leapp.logger import configure_logger
 from leapp.actors import get_actors
-from leapp.tool.utils import find_project_basedir, load_all_from, get_project_metadata
+from leapp.tool.utils import find_project_basedir, load_all_from, get_project_metadata, requires_project
 
 
 class RunChannels(object):
@@ -43,7 +44,10 @@ class RunChannels(object):
 @click.argument('actor-name')
 @click.option('--discard-output', is_flag=True)
 @click.option('--print-output', is_flag=True)
+@requires_project
 def cli(actor_name, discard_output, print_output):
+    log = configure_logger()
+    log.info("Woot")
     basedir = find_project_basedir('.')
     load_all_from(basedir)
     channels = RunChannels()

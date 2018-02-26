@@ -1,6 +1,6 @@
 import json
 import os
-
+import sys
 
 import click
 
@@ -18,4 +18,4 @@ def cli(name):
                 'name': name,
                 'channel_data': {}
             }, f)
-        print "New project {} has been created in {}".format(name, os.path.realpath(name))
+        sys.stdout.write("New project {} has been created in {}\n".format(name, os.path.realpath(name)))

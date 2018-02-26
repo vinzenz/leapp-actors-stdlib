@@ -4,6 +4,7 @@ import pkgutil
 import click
 
 from . import commands
+from .commands import workflow
 
 __version__ = '1.0'
 SHORT_HELP = "actor-tool is a leapp actor project management tool"
@@ -14,7 +15,14 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 def load_commands():
-    pkg_path = os.path.dirname(commands.__file__)
+    _load_commands_from(commands.__file__)
+
+    cli.add_command(workflow.workflow)
+    _load_commands_from(commands.workflow.__file__)
+
+
+def _load_commands_from(path):
+    pkg_path = os.path.dirname(path)
     for importer, name, is_pkg in pkgutil.iter_modules([pkg_path]):
         if is_pkg:
             continue

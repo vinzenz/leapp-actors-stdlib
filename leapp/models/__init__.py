@@ -6,7 +6,7 @@ from marshmallow.utils import missing
 from . import fields
 
 from leapp.exceptions import ModelDefinitionError
-from leapp.utils.meta import get_flattened_subclasses
+from leapp.utils.meta import get_flattened_subclasses, with_metaclass
 from leapp.channels import OutputOnlyChannel, ErrorChannel
 
 
@@ -15,7 +15,7 @@ class ModelMeta(type):
         klass = super(ModelMeta, mcs).__new__(mcs, name, bases, attrs)
 
         # Every model has to be bound to a channel
-        if klass.__name__ != 'Model' and issubclass(klass, Model):
+        if klass.__name__ != 'Model' and issubclass(klass, ModelMeta):
             channel = getattr(klass, 'channel', None)
             if not channel or not issubclass(channel, OutputOnlyChannel):
                 raise ModelDefinitionError('Missing channel in Model {}'.format(name))
@@ -36,8 +36,7 @@ class ModelMeta(type):
         super(ModelMeta, cls).__init__(name, bases, attrs)
 
 
-class Model(object):
-    __metaclass__ = ModelMeta
+class Model(with_metaclass(ModelMeta)):
     __schema__ = None
 
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,19 @@
+import functools
 import json
 import os
 import pkgutil
 import re
+
+import click
+
+
+def requires_project(f):
+    @functools.wraps(f)
+    def checker(*args, **kwargs):
+        if not find_project_basedir('.'):
+            raise click.UsageError('This command must be executed from the project directory')
+        return f(*args, **kwargs)
+    return checker
 
 
 def load_modules(pkg_path):
@@ -23,17 +35,22 @@ def load_modules_from(path):
 
 
 def load_all_from(basedir):
-    for directory in ('channels', 'models', 'actors'):  # Order is NOT arbitrary - keep the order
+    for directory in ('channels', 'models', 'tags', 'actors', 'workflows'):  # Order is NOT arbitrary - keep the order
         modules_dir = os.path.join(basedir, directory)
         load_modules_from(modules_dir)
 
 
+def to_snake_case(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name.replace('-', '_'))
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
 def make_class_name(name):
-    return ''.join(map(lambda x: x.capitalize(), re.split('[-_]', name)))
+    return ''.join(map(lambda x: x.capitalize(), to_snake_case(name).split('_')))
 
 
 def make_name(name):
-    return name.lower().replace('_', '-')
+    return to_snake_case(name).lower()
 
 
 def find_project_basedir(path):

@@ -9,8 +9,6 @@ from leapp.tool.utils import find_project_basedir, make_name, make_class_name
 @click.argument('channel-name')
 def cli(channel_name):
     basedir = find_project_basedir('.')
-    if not basedir:
-        raise click.UsageError('This command must be executed from the project directory')
 
     basedir = os.path.join(basedir, 'channels')
     if not os.path.isdir(basedir):
