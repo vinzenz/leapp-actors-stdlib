@@ -36,3 +36,8 @@ class ModelDefinitionError(LeappError):
 class TagFilterUsageError(LeappError):
     def __init__(self, message):
         super(TagFilterUsageError, self).__init__(message)
+
+
+class UnresolvedDependenciesError(LeappError):
+    def __init__(self, message):
+        super(UnresolvedDependenciesError, self).__init__(message)

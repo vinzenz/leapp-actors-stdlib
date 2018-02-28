@@ -3,12 +3,11 @@ import hashlib
 import json
 import logging
 
-import six
-
+from leapp.compat import string_types
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
-from leapp.utils.meta import get_flattened_subclasses, with_metaclass
 from leapp.models import Model
 from leapp.tags import Tag
+from leapp.utils.meta import get_flattened_subclasses, with_metaclass
 
 
 class ActorMeta(type):
@@ -90,11 +89,11 @@ def _get_attribute(actor, name, validator, required=False, default_value=None):
 
 def get_actor_metadata(actor):
     return dict([
-        _get_attribute(actor, 'name', _is_type(six.string_types), required=True),
+        _get_attribute(actor, 'name', _is_type(string_types), required=True),
         _get_attribute(actor, 'tags', _is_tag_tuple, required=True),
         _get_attribute(actor, 'consumes', _is_model_tuple, required=False),
         _get_attribute(actor, 'produces', _is_model_tuple, required=False),
-        _get_attribute(actor, 'description', _is_type(six.string_types), required=False,
+        _get_attribute(actor, 'description', _is_type(string_types), required=False,
                        default_value='There has been no description provided for this actor')
     ])
 

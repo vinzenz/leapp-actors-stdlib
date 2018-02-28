@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='leapp-actor-standard-library',
     py_modules=['leapp.actors', 'leapp.models', 'leapp.channels', 'leapp.tool'],
-    install_requires=['click', 'marshmallow', 'six'],
+    install_requires=['click', 'marshmallow', 'requests'],
     entry_points='''
         [console_scripts]
         snactor=leapp.tool:main

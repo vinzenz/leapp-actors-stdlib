@@ -17,7 +17,7 @@ def _is_local(base_dir, cls):
 
 def _print_group(name, items):
     sys.stdout.write('{group}:\n'.format(group=name))
-    for item in items:
+    for item in sorted(items, key=lambda x: x.__name__):
         sys.stdout.write('   - {name:<35} {path}\n'.format(name=item.__name__, path=_get_class_file(item, False)))
     sys.stdout.write('\n')
 

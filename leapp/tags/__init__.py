@@ -11,8 +11,9 @@ class TagMeta(type):
             setattr(sys.modules[mcs.__module__], name, klass)
             setattr(klass, 'actors', ())
             if not getattr(klass, 'parent', None):
-                setattr(klass, 'Pre', type('Pre' + name, (Tag,), {'name': 'pre-' + klass.name, 'parent': klass, 'actors': ()}))
-                setattr(klass, 'Post', type('Post' + name, (Tag,), {'name': 'post-' + klass.name, 'parent': klass, 'actors': ()}))
+                data = {'parent': klass, 'actors': ()}
+                setattr(klass, 'Pre', type('Pre' + name, (Tag,), dict(name='pre-' + klass.name, **data)))
+                setattr(klass, 'Post', type('Post' + name, (Tag,), dict(name='post-' + klass.name, **data)))
         return klass
 
 
