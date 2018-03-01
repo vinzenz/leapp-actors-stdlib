@@ -1,6 +1,6 @@
 import sys
 
-from leapp.utils.meta import with_metaclass
+from leapp.utils.meta import with_metaclass, get_flattened_subclasses
 from leapp.workflows.phases import Phase
 from leapp.workflows.phaseactors import PhaseActors
 
@@ -44,6 +44,11 @@ class Workflow(with_metaclass(WorkflowMeta)):
         self._all_consumed.update(self._phase_actors[-1].consumes)
         self._all_produced.update(self._phase_actors[-1].produces)
 
+
+    @property
+    def phase_actors(self):
+        return self._phase_actors
+
     @property
     def initial(self):
         return self._initial
@@ -58,3 +63,7 @@ class Workflow(with_metaclass(WorkflowMeta)):
 
     def run(self, *args, **kwargs):
         pass
+
+
+def get_workflows():
+    return get_flattened_subclasses(Workflow)

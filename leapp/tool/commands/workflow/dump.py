@@ -4,6 +4,7 @@ import sys
 
 import click
 
+import leapp.workflows
 from leapp.tool.commands.workflow import workflow
 from leapp.tool.utils import requires_project, load_all_from, find_project_basedir
 
@@ -20,9 +21,8 @@ def names(p):
 @requires_project
 def cli(name):
     load_all_from(find_project_basedir('.'))
-    from leapp.workflows import IPUWorkflow
-    wf = IPUWorkflow(None)
+    wf = leapp.workflows.IPUWorkflow()
     print(wf.initial, wf.consumes, wf.produces)
-    json.dump(names(wf._phase_actors), sys.stdout, indent=2)
+    json.dump(names(wf.phase_actors), sys.stdout, indent=2)
     sys.stdout.write('\n')
 
