@@ -1,5 +1,5 @@
 install:
-	pip install -r requirements.txt
+	pip install -r requirements-tests.txt
 
 test:
 	py.test --cov leapp
