@@ -1,8 +1,8 @@
 import sys
 
 from leapp.utils.meta import with_metaclass
-from workflows.phases import Phase
-from workflows.phaseactors import PhaseActors
+from leapp.workflows.phases import Phase
+from leapp.workflows.phaseactors import PhaseActors
 
 
 def _phase_sorter_key(a):

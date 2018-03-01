@@ -1,4 +1,4 @@
-from utils.meta import with_metaclass
+from leapp.utils.meta import with_metaclass
 
 
 class PhaseMeta(type):

@@ -1,5 +1,5 @@
-from exceptions import TagFilterUsageError
-from tags import Tag
+from leapp.exceptions import TagFilterUsageError
+from leapp.tags import Tag
 
 
 class TagFilter(object):

@@ -1,6 +1,6 @@
 import itertools
 
-from workflows import TagFilter
+from leapp.workflows.tagfilters import TagFilter
 
 
 class Filter(object):

@@ -38,6 +38,6 @@ class TagFilterUsageError(LeappError):
         super(TagFilterUsageError, self).__init__(message)
 
 
-class UnresolvedDependenciesError(LeappError):
+class CyclingDependenciesError(LeappError):
     def __init__(self, message):
-        super(UnresolvedDependenciesError, self).__init__(message)
+        super(CyclingDependenciesError, self).__init__(message)

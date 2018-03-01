@@ -1,4 +1,4 @@
-from exceptions import UnresolvedDependenciesError
+from leapp.exceptions import CyclingDependenciesError
 
 
 class PhaseActors(object):
@@ -18,10 +18,6 @@ class PhaseActors(object):
                 self._messages.setdefault(message.__name__, {'type': message, 'producers': []})
         self._initial = self._consumes - self._produces
         self._sort()
-
-    @property
-    def actors(self):
-        return tuple(self._actors)
 
     @property
     def initial(self):
@@ -55,8 +51,8 @@ class PhaseActors(object):
                     self._actors += (actor,)
 
             if not scheduled:
-                raise UnresolvedDependenciesError(
-                    "Could not solve dependency order for '{}'".format(', '.join([a[0].name for a in actors])))
+                raise CyclingDependenciesError(
+                    "Could not solve dependency order for '{}'".format(', '.join([actor.name for actor in actors])))
 
             for idx in reversed(scheduled):
                 actors.pop(idx)
