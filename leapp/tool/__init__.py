@@ -1,5 +1,6 @@
 import os
 import pkgutil
+import socket
 
 import click
 
@@ -37,5 +38,6 @@ def cli():
 
 
 def main():
+    os.environ['LEAPP_HOSTNAME'] = socket.getfqdn()
     load_commands()
     cli()

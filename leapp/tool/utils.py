@@ -1,10 +1,14 @@
 import functools
+import itertools
 import json
 import os
 import pkgutil
 import re
+import socket
 
 import click
+
+from leapp.utils.actorapi import get_actor_api
 
 
 def requires_project(f):
@@ -73,3 +77,58 @@ def get_project_metadata(path):
 
 def get_project_name(path):
     return get_project_metadata(path)['name']
+
+
+class BaseChannels(object):
+    def __init__(self):
+        self._data = {}
+        self._new_data = {}
+        self._session = get_actor_api()
+
+    def produce(self, channel, message):
+        message.setdefault('phase', os.environ.get('LEAPP_CURRENT_PHASE', 'NON-WORKFLOW-EXECUTION'))
+        message.setdefault('context', os.environ.get('LEAPP_EXECUTION_ID', 'TESTING-CONTEXT'))
+        message.setdefault('hostname', os.environ.get('LEAPP_HOSTNAME', socket.getfqdn()))
+        self._session.post('leapp://localhost/actors/v1/message', json=message)
+        self._new_data.setdefault(channel, []).append(message)
+
+    def consume(self, *types):
+        if not type:
+            return self._data
+        lookup = {model.__name__: model for model in types}
+        return (lookup[message['type']](**message['message']['data'])
+                for message in self._data if message['type'] in lookup)
+
+
+class WorkflowChannels(BaseChannels):
+    def __init__(self):
+        super(WorkflowChannels, self).__init__()
+
+    def load(self, consumes):
+        names = [consume.__name__ for consume in consumes]
+        request = self._session.post('leapp://localhost/actors/v1/messages', json={
+            'context': os.environ.get('LEAPP_EXECUTION_ID', 'TESTING-CONTEXT'),
+            'messages': names})
+        request.raise_for_status()
+        self._data = request.json()['messages']
+        for entry in self._data:
+            entry['message']['data'] = json.loads(entry['message']['data'])
+
+
+class RunChannels(BaseChannels):
+    def __init__(self):
+        super(RunChannels, self).__init__()
+
+    def load(self):
+        self._data = get_project_metadata(find_project_basedir('.'))['channel_data']
+
+    def get_new(self):
+        return self._new_data
+
+    def store(self):
+        for channel in self._new_data.keys():
+            self._data.setdefault(channel, []).extend(self._new_data[channel])
+        metadata = get_project_metadata(find_project_basedir('.'))
+        metadata.update({'channel_data': list(itertools.chain(*self._data.values()))})
+        with open(os.path.join(find_project_basedir('.'), '.leapp/info'), 'w') as f:
+            json.dump(metadata, f, indent=2)

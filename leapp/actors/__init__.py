@@ -2,6 +2,7 @@ import datetime
 import hashlib
 import json
 import logging
+import os
 
 from leapp.compat import string_types
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
@@ -19,23 +20,32 @@ class ActorMeta(type):
 
 
 class Actor(with_metaclass(ActorMeta)):
-    def __init__(self, channels=None):
+    def __init__(self, channels=None, logger=None):
         self._channels = channels
-        self.log = logging.getLogger('leapp.actor').getChild(self.__class__.name)
+        self.log = (logger or logging.getLogger('leapp.actors')).getChild(self.name)
+
+    def run(self, *args):
+        os.environ['LEAPP_CURRENT_ACTOR'] = self.name
+        try:
+            self.process(*args)
+        finally:
+            os.environ.pop('LEAPP_CURRENT_ACTOR', None)
 
     def produce(self, *args):
         if self._channels:
             for arg in args:
                 if isinstance(arg, getattr(self.__class__, 'produces')):
-                    message = arg.__schema__().dump(arg).data
-                    message_id = hashlib.sha256(json.dumps(message)).hexdigest()
+                    message_data = json.dumps(arg.__schema__().dump(arg).data, sort_keys=True)
+                    message_hash = hashlib.sha256(message_data).hexdigest()
                     self._channels.produce(arg.channel.name, {
                         'type': arg.__class__.__name__,
                         'actor': self.name,
                         'channel': arg.channel.name,
-                        'time': datetime.datetime.utcnow().isoformat() + 'Z',
-                        'message': message,
-                        'id': message_id
+                        'stamp': datetime.datetime.utcnow().isoformat() + 'Z',
+                        'message': {
+                            'data': message_data,
+                            'hash': message_hash
+                        }
                     })
 
     def consume(self, *types):
