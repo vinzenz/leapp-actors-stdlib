@@ -41,12 +41,12 @@ class Workflow(with_metaclass(WorkflowMeta)):
         for phase in self.phases:
             self._phase_actors.append((
                 phase,
-                self._apply_phase(phase.filter.get_pre()),
-                self._apply_phase(phase.filter.get()),
-                self._apply_phase(phase.filter.get_post())))
+                self._apply_phase(phase.filter.get_before(), 'Before'),
+                self._apply_phase(phase.filter.get(), 'Main'),
+                self._apply_phase(phase.filter.get_after(), 'After')))
 
-    def _apply_phase(self, actors):
-        phase_actors = PhaseActors(actors)
+    def _apply_phase(self, actors, stage):
+        phase_actors = PhaseActors(actors, stage)
         self._initial.update(set(phase_actors.initial) - self._all_produced)
         self._all_consumed.update(phase_actors.consumes)
         self._all_produced.update(phase_actors.produces)
@@ -69,14 +69,18 @@ class Workflow(with_metaclass(WorkflowMeta)):
         return self._all_produced
 
     def run(self, *args, **kwargs):
-        os.environ['LEAPP_EXECUTION_ID'] = uuid.uuid4().hex
+        os.environ['LEAPP_EXECUTION_ID'] = str(uuid.uuid4())
+
         self.log.info('Starting workflow execution: {name} - ID: {id}'.format(
             name=self.name, id=os.environ['LEAPP_EXECUTION_ID']))
+
         for phase in self._phase_actors:
-            self.log.info('Starting phase {name}'.format(name=phase[0].name))
             os.environ['LEAPP_CURRENT_PHASE'] = phase[0].name
+
+            self.log.info('Starting phase {name}'.format(name=phase[0].name))
             current_logger = self.log.getChild(phase[0].__name__)
             for stage in phase[1:]:
+                current_logger.info("Starting stage {stage} of phase {phase}".format(phase=phase[0].name, stage=stage.stage))
                 for actor in stage.actors:
                     sys.stdout.write('Running actor {}\n'.format(actor.__name__))
                     channels = WorkflowChannels()

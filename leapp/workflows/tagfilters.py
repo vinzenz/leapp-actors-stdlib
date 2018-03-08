@@ -9,13 +9,13 @@ class TagFilter(object):
         if not self.phase or not isinstance(self.phase, type) or not issubclass(self.phase, Tag):
             raise TagFilterUsageError("TagFilter phase key needs to be set to a tag.")
 
-    def get_pre(self):
-        result = set(self.phase.Pre.actors)
+    def get_before(self):
+        result = set(self.phase.Before.actors)
         [result.intersection_update(tag.actors) for tag in self.tags]
         return tuple(result)
 
-    def get_post(self):
-        result = set(self.phase.Post.actors)
+    def get_after(self):
+        result = set(self.phase.After.actors)
         [result.intersection_update(tag.actors) for tag in self.tags]
         return tuple(result)
 

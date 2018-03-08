@@ -12,8 +12,8 @@ class TagMeta(type):
             setattr(klass, 'actors', ())
             if not getattr(klass, 'parent', None):
                 data = {'parent': klass, 'actors': ()}
-                setattr(klass, 'Pre', type('Pre' + name, (Tag,), dict(name='pre-' + klass.name, **data)))
-                setattr(klass, 'Post', type('Post' + name, (Tag,), dict(name='post-' + klass.name, **data)))
+                setattr(klass, 'Before', type('Before' + name, (Tag,), dict(name='before-' + klass.name, **data)))
+                setattr(klass, 'After', type('After' + name, (Tag,), dict(name='after-' + klass.name, **data)))
         return klass
 
 

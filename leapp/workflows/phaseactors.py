@@ -2,7 +2,8 @@ from leapp.exceptions import CyclingDependenciesError
 
 
 class PhaseActors(object):
-    def __init__(self, actors):
+    def __init__(self, actors, stage):
+        self.stage = stage
         self._actors = actors
         self._consumes = set()
         self._produces = set()
