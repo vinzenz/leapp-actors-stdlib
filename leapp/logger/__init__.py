@@ -43,7 +43,7 @@ def configure_logger():
     global _logger
     if not _logger:
         logging.Formatter.converter = time.gmtime
-        log_format = '%(asctime)s.%(msecs)d %(name)s %(levelname)s: %(message)s'
+        log_format = '%(asctime)s.%(msecs)-3d %(levelname)-8s PID: %(process)d %(name)s: %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
         logging.basicConfig(
             level=logging.DEBUG,
@@ -55,7 +55,7 @@ def configure_logger():
         handler = LeappAuditHandler(format=log_format, datefmt=log_date_format)
         logging.getLogger('leapp').addHandler(handler)
 
-        logging.info('Logging has been initialized')
         _logger = logging.getLogger('leapp')
+        _logger.info('Logging has been initialized')
 
     return _logger

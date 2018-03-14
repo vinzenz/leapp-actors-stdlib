@@ -1,5 +1,6 @@
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.DS_Store
 .Python
 [Bb]in
 [Ii]nclude
@@ -17,3 +18,4 @@ pip-selfcheck.json
 .cache/
 *.egg-info/
 *.py[co]
+*/.Python/*

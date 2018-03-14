@@ -14,6 +14,13 @@ class TagMeta(type):
                 data = {'parent': klass, 'actors': ()}
                 setattr(klass, 'Before', type('Before' + name, (Tag,), dict(name='before-' + klass.name, **data)))
                 setattr(klass, 'After', type('After' + name, (Tag,), dict(name='after-' + klass.name, **data)))
+                common = type('Common' + name, (Tag,), dict(name='common-' + klass.name, **data))
+                data_common = {'parent': common, 'actors': ()}
+                setattr(common, 'Before', type('BeforeCommon' + name, (Tag,),
+                                               dict(name='before-' + common.name, **data_common)))
+                setattr(common, 'After', type('AfterCommon' + name, (Tag,),
+                                              dict(name='after-' + common.name, **data_common)))
+                setattr(klass, 'Common', common)
         return klass
 
 

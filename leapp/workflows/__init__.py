@@ -78,11 +78,11 @@ class Workflow(with_metaclass(WorkflowMeta)):
             os.environ['LEAPP_CURRENT_PHASE'] = phase[0].name
 
             self.log.info('Starting phase {name}'.format(name=phase[0].name))
-            current_logger = self.log.getChild(phase[0].__name__)
+            current_logger = self.log.getChild(phase[0].name)
             for stage in phase[1:]:
                 current_logger.info("Starting stage {stage} of phase {phase}".format(phase=phase[0].name, stage=stage.stage))
                 for actor in stage.actors:
-                    sys.stdout.write('Running actor {}\n'.format(actor.__name__))
+                    current_logger.info("Executing actor {actor}".format(actor=actor.name))
                     channels = WorkflowChannels()
                     channels.load(actor.consumes)
                     actor(logger=current_logger, channels=channels).run(*args, **kwargs)

@@ -3,8 +3,8 @@ from leapp.tags import Tag
 
 
 class TagFilter(object):
-    def __init__(self, *tags, **kwargs):
-        self.phase = kwargs.get('phase')
+    def __init__(self, phase, *tags):
+        self.phase = phase
         self.tags = tags
         if not self.phase or not isinstance(self.phase, type) or not issubclass(self.phase, Tag):
             raise TagFilterUsageError("TagFilter phase key needs to be set to a tag.")

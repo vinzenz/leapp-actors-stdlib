@@ -3,23 +3,41 @@ import hashlib
 import json
 import logging
 import os
+import sys
 
 from leapp.compat import string_types
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
 from leapp.models import Model
 from leapp.tags import Tag
-from leapp.utils.meta import get_flattened_subclasses, with_metaclass
+from leapp.utils.meta import get_flattened_subclasses
+
+'''
+Before loading an actor file dynamically update leapp.libraries.actor and afterwards replace it with an empty dummy
+this way the module imported should be the one wanted and the others won't see it
+'''
 
 
-class ActorMeta(type):
-    def __new__(mcs, *args, **kwargs):
-        klass = super(ActorMeta, mcs).__new__(mcs, *args, **kwargs)
-        for tag in getattr(klass, 'tags', ()):
-            tag.actors = tuple(set(tag.actors + (klass,)))
-        return klass
+class ActorDirectories(object):
+    def __init__(self, directory):
+        self.base_dir = os.path.abspath(
+            os.path.realpath(
+                os.path.dirname(
+                    sys.modules[actor.__module__].__file__)))
+
+    def library(self):
+        path = os.path.join(self.base_dir, 'libraries')
+        return os.path.exists(path) and path
+
+    def files(self):
+        path = os.path.join(self.base_dir, 'files')
+        return os.path.exists(path) and path
+
+    def tools(self):
+        path = os.path.join(self.base_dir, 'tools')
+        return os.path.exists(path) and path
 
 
-class Actor(with_metaclass(ActorMeta)):
+class Actor(object):
     def __init__(self, channels=None, logger=None):
         self._channels = channels
         self.log = (logger or logging.getLogger('leapp.actors')).getChild(self.name)
@@ -99,6 +117,7 @@ def _get_attribute(actor, name, validator, required=False, default_value=None):
 
 def get_actor_metadata(actor):
     return dict([
+        ('class_name', actor.__name__),
         _get_attribute(actor, 'name', _is_type(string_types), required=True),
         _get_attribute(actor, 'tags', _is_tag_tuple, required=True),
         _get_attribute(actor, 'consumes', _is_model_tuple, required=False),

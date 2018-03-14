@@ -20,28 +20,36 @@ def requires_project(f):
     return checker
 
 
-def load_modules(pkg_path):
+def load_modules(pkg_path, use_repo=None):
     modules = []
+    from leapp.libraries import actor as actor_module
     for importer, name, is_pkg in pkgutil.iter_modules([pkg_path]):
         if is_pkg:
             continue
-        modules.append(importer.find_module(name).load_module(name))
+        if use_repo:
+            for actor in use_repo.actors:
+                actor_dir = os.path.dirname(actor.directory)
+                if importer.path.endswith(actor_dir):
+                    with actor.injected_context():
+                        modules.append(importer.find_module(name).load_module(name))
+                    break
+        else:
+            modules.append(importer.find_module(name).load_module(name))
     return modules
 
 
-def load_modules_from(path):
+def load_modules_from(path, use_repo=None):
     if os.path.exists(path):
-        if load_modules(path):
+        if load_modules(path, use_repo=use_repo):
             return
         for root, _, _ in os.walk(path):
-            if load_modules(root):
-                return
+            load_modules(root, use_repo=use_repo)
 
 
-def load_all_from(basedir):
+def load_all_from(basedir, use_repo=None):
     for directory in ('channels', 'models', 'tags', 'actors', 'workflows'):  # Order is NOT arbitrary - keep the order
         modules_dir = os.path.join(basedir, directory)
-        load_modules_from(modules_dir)
+        load_modules_from(modules_dir, use_repo=use_repo if directory == 'actors' else None)
 
 
 def to_snake_case(name):
@@ -80,23 +88,30 @@ def get_project_name(path):
 
 
 class BaseChannels(object):
-    def __init__(self):
-        self._data = {}
-        self._new_data = {}
+    def __init__(self, produce_hook=None):
+        self._data = []
+        self._new_data = []
         self._session = get_actor_api()
+        self._produce_hook = produce_hook
+
+    def set_produce_hook(self, produce_hook):
+        self._produce_hook = produce_hook
 
     def produce(self, channel, message):
+        message.setdefault('channel', channel)
         message.setdefault('phase', os.environ.get('LEAPP_CURRENT_PHASE', 'NON-WORKFLOW-EXECUTION'))
         message.setdefault('context', os.environ.get('LEAPP_EXECUTION_ID', 'TESTING-CONTEXT'))
         message.setdefault('hostname', os.environ.get('LEAPP_HOSTNAME', socket.getfqdn()))
         self._session.post('leapp://localhost/actors/v1/message', json=message)
-        self._new_data.setdefault(channel, []).append(message)
+        self._new_data.append(message)
+        if self.produce_hook:
+            self.produce_hook(message)
 
     def consume(self, *types):
         if not type:
             return self._data
         lookup = {model.__name__: model for model in types}
-        return (lookup[message['type']](**message['message']['data'])
+        return (lookup[message['type']](**json.loads(message['message']['data']))
                 for message in self._data if message['type'] in lookup)
 
 
@@ -111,8 +126,6 @@ class WorkflowChannels(BaseChannels):
             'messages': names})
         request.raise_for_status()
         self._data = request.json()['messages']
-        for entry in self._data:
-            entry['message']['data'] = json.loads(entry['message']['data'])
 
 
 class RunChannels(BaseChannels):
@@ -126,9 +139,8 @@ class RunChannels(BaseChannels):
         return self._new_data
 
     def store(self):
-        for channel in self._new_data.keys():
-            self._data.setdefault(channel, []).extend(self._new_data[channel])
+        self._data.extend(self._new_data)
         metadata = get_project_metadata(find_project_basedir('.'))
-        metadata.update({'channel_data': list(itertools.chain(*self._data.values()))})
+        metadata.update({'channel_data': self._data})
         with open(os.path.join(find_project_basedir('.'), '.leapp/info'), 'w') as f:
             json.dump(metadata, f, indent=2)

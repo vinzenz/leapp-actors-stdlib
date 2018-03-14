@@ -41,3 +41,36 @@ class TagFilterUsageError(LeappError):
 class CyclingDependenciesError(LeappError):
     def __init__(self, message):
         super(CyclingDependenciesError, self).__init__(message)
+
+
+class UnsupportedDefinitionKindError(LeappError):
+    def __init__(self, message):
+        super(UnsupportedDefinitionKindError, self).__init__(message)
+
+
+class ModuleNameAlreadyExistsError(LeappError):
+    def __init__(self, message):
+        super(ModuleNameAlreadyExistsError, self).__init__(message)
+
+
+class ActorInspectionFailedError(LeappError):
+    def __init__(self, message):
+        super(ActorInspectionFailedError, self).__init__(message)
+
+
+class MultipleActorsError(LeappError):
+    def __init__(self, path):
+        super(MultipleActorsError, self).__init__(
+            'Multiple actors found in {path}. Inspection failed'.format(path=path))
+
+
+class RepoItemPathDoesNotExistError(LeappError):
+    def __init__(self, kind, rel_path, full_path):
+        super(RepoItemPathDoesNotExistError, self).__init__(
+            'Could not find {kind} item with relative path: {rel_path} at {full_path}'.format(
+                kind=kind, rel_path=rel_path, full_path=full_path))
+
+
+class ActorDiscoveryExecutionError(LeappError):
+    def __init__(self, message):
+        super(ActorDiscoveryExecutionError, self).__init__(message)
