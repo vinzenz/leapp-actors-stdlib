@@ -3,7 +3,6 @@ import hashlib
 import json
 import logging
 import os
-import sys
 
 from leapp.compat import string_types
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
@@ -11,36 +10,37 @@ from leapp.models import Model
 from leapp.tags import Tag
 from leapp.utils.meta import get_flattened_subclasses
 
-'''
-Before loading an actor file dynamically update leapp.libraries.actor and afterwards replace it with an empty dummy
-this way the module imported should be the one wanted and the others won't see it
-'''
-
-
-class ActorDirectories(object):
-    def __init__(self, directory):
-        self.base_dir = os.path.abspath(
-            os.path.realpath(
-                os.path.dirname(
-                    sys.modules[actor.__module__].__file__)))
-
-    def library(self):
-        path = os.path.join(self.base_dir, 'libraries')
-        return os.path.exists(path) and path
-
-    def files(self):
-        path = os.path.join(self.base_dir, 'files')
-        return os.path.exists(path) and path
-
-    def tools(self):
-        path = os.path.join(self.base_dir, 'tools')
-        return os.path.exists(path) and path
-
 
 class Actor(object):
     def __init__(self, channels=None, logger=None):
         self._channels = channels
         self.log = (logger or logging.getLogger('leapp.actors')).getChild(self.name)
+
+    @property
+    def actor_files_paths(self):
+        return os.getenv("LEAPP_FILES", "").split(":")
+
+    @property
+    def files_paths(self):
+        return self.actor_files_paths + self.common_files_paths
+
+    @property
+    def common_files_paths(self):
+        return os.getenv("LEAPP_COMMON_FILES", "").split(":")
+
+    def get_folder_path(self, name):
+        for path in self.files_paths:
+            path = os.path.join(path, name)
+            if os.path.isdir(path):
+                return path
+        return None
+
+    def get_file_path(self, name):
+        for path in self.files_paths:
+            path = os.path.join(path, name)
+            if os.path.isfile(path):
+                return path
+        return None
 
     def run(self, *args):
         os.environ['LEAPP_CURRENT_ACTOR'] = self.name

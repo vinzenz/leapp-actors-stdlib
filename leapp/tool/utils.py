@@ -1,14 +1,10 @@
 import functools
-import itertools
 import json
 import os
 import pkgutil
 import re
-import socket
 
 import click
-
-from leapp.utils.actorapi import get_actor_api
 
 
 def requires_project(f):
@@ -22,7 +18,6 @@ def requires_project(f):
 
 def load_modules(pkg_path, use_repo=None):
     modules = []
-    from leapp.libraries import actor as actor_module
     for importer, name, is_pkg in pkgutil.iter_modules([pkg_path]):
         if is_pkg:
             continue
@@ -85,62 +80,3 @@ def get_project_metadata(path):
 
 def get_project_name(path):
     return get_project_metadata(path)['name']
-
-
-class BaseChannels(object):
-    def __init__(self, produce_hook=None):
-        self._data = []
-        self._new_data = []
-        self._session = get_actor_api()
-        self._produce_hook = produce_hook
-
-    def set_produce_hook(self, produce_hook):
-        self._produce_hook = produce_hook
-
-    def produce(self, channel, message):
-        message.setdefault('channel', channel)
-        message.setdefault('phase', os.environ.get('LEAPP_CURRENT_PHASE', 'NON-WORKFLOW-EXECUTION'))
-        message.setdefault('context', os.environ.get('LEAPP_EXECUTION_ID', 'TESTING-CONTEXT'))
-        message.setdefault('hostname', os.environ.get('LEAPP_HOSTNAME', socket.getfqdn()))
-        self._session.post('leapp://localhost/actors/v1/message', json=message)
-        self._new_data.append(message)
-        if self.produce_hook:
-            self.produce_hook(message)
-
-    def consume(self, *types):
-        if not type:
-            return self._data
-        lookup = {model.__name__: model for model in types}
-        return (lookup[message['type']](**json.loads(message['message']['data']))
-                for message in self._data if message['type'] in lookup)
-
-
-class WorkflowChannels(BaseChannels):
-    def __init__(self):
-        super(WorkflowChannels, self).__init__()
-
-    def load(self, consumes):
-        names = [consume.__name__ for consume in consumes]
-        request = self._session.post('leapp://localhost/actors/v1/messages', json={
-            'context': os.environ.get('LEAPP_EXECUTION_ID', 'TESTING-CONTEXT'),
-            'messages': names})
-        request.raise_for_status()
-        self._data = request.json()['messages']
-
-
-class RunChannels(BaseChannels):
-    def __init__(self):
-        super(RunChannels, self).__init__()
-
-    def load(self):
-        self._data = get_project_metadata(find_project_basedir('.'))['channel_data']
-
-    def get_new(self):
-        return self._new_data
-
-    def store(self):
-        self._data.extend(self._new_data)
-        metadata = get_project_metadata(find_project_basedir('.'))
-        metadata.update({'channel_data': self._data})
-        with open(os.path.join(find_project_basedir('.'), '.leapp/info'), 'w') as f:
-            json.dump(metadata, f, indent=2)

@@ -4,9 +4,8 @@ import sys
 import click
 
 from leapp.logger import configure_logger
-from leapp.actors import get_actors, Actor
-from leapp.tool.utils import find_project_basedir, load_all_from, requires_project
-from leapp.tool.utils import RunChannels
+from leapp.tool.utils import find_project_basedir, requires_project
+from leapp.tool.channels import RunChannels
 from leapp.repository.scan import scan_repo
 
 
