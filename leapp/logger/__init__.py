@@ -46,7 +46,7 @@ def configure_logger():
         log_format = '%(asctime)s.%(msecs)-3d %(levelname)-8s PID: %(process)d %(name)s: %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
         logging.basicConfig(
-            level=logging.DEBUG,
+            level=logging.DEBUG if os.getenv('LEAPP_DEBUG', '1') == '1' else logging.INFO,
             format=log_format,
             datefmt=log_date_format,
             stream=sys.stderr,

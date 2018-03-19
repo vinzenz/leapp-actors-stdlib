@@ -32,9 +32,10 @@ def _load_commands_from(path):
 
 
 @click.group('actor-tool', help=LONG_HELP, short_help=SHORT_HELP, context_settings=CONTEXT_SETTINGS)
+@click.option('--debug/--no-debug', default=False)
 @click.version_option(__version__)
-def cli():
-    pass
+def cli(debug):
+    os.environ['LEAPP_DEBUG'] = '1' if debug else '0'
 
 
 def main():
