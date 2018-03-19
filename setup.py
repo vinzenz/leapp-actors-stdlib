@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name='leapp-actor-standard-library',
-    py_modules=['leapp.actors', 'leapp.models', 'leapp.channels', 'leapp.tool'],
+    packages=find_packages(),
     install_requires=['click', 'marshmallow', 'requests'],
     entry_points='''
         [console_scripts]
