@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import os
+import sys
 
 from leapp.compat import string_types
 from leapp.exceptions import MissingActorAttributeError, WrongAttributeTypeError
@@ -118,6 +119,7 @@ def _get_attribute(actor, name, validator, required=False, default_value=None):
 def get_actor_metadata(actor):
     return dict([
         ('class_name', actor.__name__),
+        ('path', os.path.dirname(sys.modules[actor.__module__].__file__)),
         _get_attribute(actor, 'name', _is_type(string_types), required=True),
         _get_attribute(actor, 'tags', _is_tag_tuple, required=True),
         _get_attribute(actor, 'consumes', _is_model_tuple, required=False),

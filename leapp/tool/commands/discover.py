@@ -4,22 +4,29 @@ import sys
 
 import click
 
-from leapp.tool.utils import find_project_basedir, load_all_from, get_project_name, requires_project
-from leapp.models import get_models
 from leapp.actors import get_actors, get_actor_metadata
 from leapp.channels import get_channels
+from leapp.models import get_models
+from leapp.repository.scan import scan_repo
 from leapp.tags import get_tags
+from leapp.tool.utils import find_project_basedir, get_project_name, requires_project
 
 
 def _is_local(base_dir, cls):
     return os.path.realpath(sys.modules[cls.__module__].__file__).startswith(base_dir)
 
 
-def _print_group(name, items):
+def _print_group(name, items, name_resolver=lambda item: item.__name__,
+                 path_resolver=lambda x, y: _get_class_file(x, y)):
     sys.stdout.write('{group}:\n'.format(group=name))
-    for item in sorted(items, key=lambda x: x.__name__):
-        sys.stdout.write('   - {name:<35} {path}\n'.format(name=item.__name__, path=_get_class_file(item, False)))
+    for item in sorted(items, key=lambda x: name_resolver(x)):
+        sys.stdout.write('   - {name:<35} {path}\n'.format(name=name_resolver(item), path=path_resolver(item, False)))
     sys.stdout.write('\n')
+
+
+def _get_actor_path(actor, project_relative=True):
+    path = actor.path
+    return os.path.relpath(path, find_project_basedir('.') if project_relative else os.getcwd())
 
 
 def _get_class_file(cls, project_relative=True):
@@ -55,16 +62,17 @@ def _get_model_details(model):
 @requires_project
 def cli(json):
     base_dir = find_project_basedir('.')
-    load_all_from(base_dir)
+    repository = scan_repo(base_dir)
+    repository.load()
 
-    actors = [actor for actor in get_actors() if _is_local(base_dir, actor)]
+    actors = [actor for actor in repository.actors]
     models = [model for model in get_models() if _is_local(base_dir, model)]
     channels = [channel for channel in get_channels() if _is_local(base_dir, channel)]
     tags = [tag for tag in get_tags() if _is_local(base_dir, tag)]
     if not json:
         _print_group('Models', models)
         _print_group('Channels', channels)
-        _print_group('Actors', actors)
+        _print_group('Actors', actors, name_resolver=lambda x: x.class_name, path_resolver=_get_actor_path)
         _print_group('Tags', tags)
     else:
         output = {
@@ -72,7 +80,7 @@ def cli(json):
             'base_dir': base_dir,
             'channels': {channel.__name__: _get_channel_details(channel) for channel in channels},
             'models': {model.__name__: _get_model_details(model) for model in models},
-            'actors': {actor.__name__: _get_actor_details(actor) for actor in actors},
+            'actors': {actor.class_name: _get_actor_details(actor) for actor in actors},
             'tags': {tag.name: _get_tag_details(tag) for tag in tags}
         }
         json_mod.dump(output, sys.stdout, indent=2)
