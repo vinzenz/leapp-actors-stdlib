@@ -19,6 +19,7 @@ def scan(repository, path):
         ('workflows', scan_workflows),
         ('files', scan_files),
         ('libraries', scan_libraries),
+        ('tests', scan_tests),
         ('tools', scan_tools))
 
     dirs = [e for e in os.listdir(path) if os.path.isdir(os.path.join(path, e))]
@@ -85,3 +86,8 @@ def scan_libraries(repo, path, repo_path):
 def scan_tools(repo, path, repo_path):
     if os.listdir(path):
         repo.add(DefinitionKind.TOOLS, os.path.relpath(path, repo_path))
+
+
+def scan_tests(repo, path, repo_path):
+    if os.listdir(path):
+        repo.add(DefinitionKind.TESTS, os.path.relpath(path, repo_path))
