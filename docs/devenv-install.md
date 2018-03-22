@@ -14,7 +14,7 @@ Next we will install the framework via pip
 	$ pip install git+https://github.com/leapp-to/leapp-actors-stdlib
 ```
 
-Once the framework is install in your virtualenv environment you can start using the snactor tool.
+Once the framework is installed in your virtualenv environment you can start using the snactor tool.
 ```shell
 	$ snactor -h
 	Usage: snactor [OPTIONS] COMMAND [ARGS]...
