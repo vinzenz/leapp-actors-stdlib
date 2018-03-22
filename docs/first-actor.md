@@ -124,3 +124,112 @@ Now we can save the file a go write an actor using the other parts.
 
 ### Creating an actor
 
+So as we said in the introduction we said we would like to create an actor
+that retrieves the system hostname and sends it as a message.
+Therefore we will create an actor called HostnameScanner
+
+```shell
+    $ snactor new-actor HostnameScanner
+```
+
+We will receive a folder actors/hostnamescanner/ with an actor.py file
+and a tests subfolder. Let's look at the pregenerated actor.py file:
+
+```python
+from leapp.actors import Actor
+
+
+class HostnameScanner(Actor):
+     name = 'hostname_scanner'
+     description = 'For the actor hostname_scanner has been no description provided.'
+     consumes = ()
+     produces = ()
+     tags = ()
+
+     def process(self):
+         pass
+```
+
+First we will have to import the model and the tag we have previously created to
+be able to assign them.
+
+```python
+from leapp.models import Hostname
+from leapp.tags import ScanTag
+```
+
+Now assign *Hostname*, to the *produces* attribute as a tuple element and
+do the same with *ScanTag* and the *tags* attribute
+Don't forget the trailing comma ;-)
+
+```python
+     consumes = ()
+     produces = (Hostname,)
+     tags = (ScanTag,)
+```
+
+Now we can start writing the actor code. The actor code has to be added
+in the process method.
+
+To retrieve the hostname, we will use the python socket module, which has
+a function called getfqdn. This will retrieve us the hostname.
+
+For that add `import socket` on the top of the file.
+
+A very minimal implementation for this actor can look like this:
+
+```python
+    def process(self):
+        self.produce(Hostname(name=socket.getfqdn()))
+```
+
+But we would like also to do some logging so we can see our actor at work.
+
+```python
+   def process(self):
+       self.log.info("Starting to scan for the hostname")
+       hostname = socket.getfqdn()
+       self.produce(Hostname(name=hostname))
+       self.log.info("Finished scanning for the hostname, found = %s",
+                     hostname)
+```
+
+If you want, you can edit the description of the actor now.
+
+Now we can save the file and it's ready to run from commandline via:
+
+```shell
+	$ snactor run HostnameScanner
+    2018-03-20 13:24:06.20  INFO     PID: 6256 leapp: Logging has been initialized
+    2018-03-20 13:24:06.22  INFO     PID: 6256 leapp.repository.tutorial: New repository 'tutorial' initialized at /home/evilissimo/devel/tutorial
+    2018-03-20 13:24:06.67  INFO     PID: 6273 leapp.actors.hostname_scanner: Starting to scan for the hostname
+    2018-03-20 13:24:16.188 INFO     PID: 6273 leapp.actors.hostname_scanner: Finished scanning for the hostname, found = actor-developer
+```
+
+If you want to see the message it generated use the --print-output flag
+
+```shell
+	$ snactor run --print-output HostnameScanner
+	2018-03-20 13:24:32.333 INFO     PID: 6300 leapp: Logging has been initialized
+	2018-03-20 13:24:32.335 INFO     PID: 6300 leapp.repository.tutorial: New repository 'tutorial' initialized at /home/evilissimo/devel/tutorial
+	2018-03-20 13:24:32.372 INFO     PID: 6317 leapp.actors.hostname_scanner: Starting to scan for the hostname
+	2018-03-20 13:24:42.492 INFO     PID: 6317 leapp.actors.hostname_scanner: Finished scanning for the hostname, found = actor-developer
+	[
+	  {
+		"stamp": "2018-03-20T13:24:37.434408Z",
+		"hostname": "actor-developer",
+		"actor": "hostname_scanner",
+		"context": "TESTING-CONTEXT",
+		"phase": "NON-WORKFLOW-EXECUTION",
+		"message": {
+		  "hash": "fb5ce8e630a1b3171709c9273883b8eb499b6b2ba09e112832ad47fa4e3f62b7",
+		  "data": "{\"name\": \"actor-developer\"}"
+		},
+		"type": "Hostname",
+		"channel": "system_info"
+	  }
+	]
+```
+
+#### Screencast
+![Create Actor Tutorial Cast](create-actor.gif)
