@@ -70,4 +70,57 @@ the complete code and definition for the *SystemInfoChannel* class we will use i
 
 ### Creating a model
 
+Now we have to create the model we want to use for sending the message. We will call the
+model *Hostname* and have it assigned to the *SystemInfoChannel*
+
+```shell
+   $ snactor new-model Hostname
+```
+
+The model boiler plate will be now available at models/hostname.py and looks like this:
+
+```python
+from leapp.models import Model, fields
+
+
+class Hostname(Model):
+    channel = None #  TODO: import appropriate channel and set it here
+```
+
+As the comment says, we will have to import the SystemInfoChannel and assign it to
+the channel variable of the Hostname class.
+
+You can import the SystemInfoChannel class like this:
+```python
+from leapp.channels import SystemInfoChannel
+```
+
+After the channel has been assigned we will create a new field for the message
+called name, which is supposed to be a string. This can be accomplished by
+setting the name field like this:
+
+```python
+class Hostname(Model):
+    channel = SystemInfoChannel
+    name = fields.String()
+```
+
+Now let's add a default value of 'localhost.localdomain', in case the name
+does not get set. Default values are initializing the values in the
+construction of the class object, if there has not been passed any other
+value.
+
+```python
+class Hostname(Model):
+    channel = SystemInfoChannel
+    name = fields.String(default='localhost.localdomain')
+```
+
+Now we can save the file a go write an actor using the other parts.
+
+#### Screencast
+![Create Model Tutorial Cast](create-model.gif)
+
+
+### Creating an actor
 
