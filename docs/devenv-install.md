@@ -17,6 +17,27 @@ Next we will install the framework via pip
 Once the framework is install in your virtualenv environment you can start using the snactor tool.
 ```shell
 	$ snactor -h
+	Usage: snactor [OPTIONS] COMMAND [ARGS]...                                      
+																					
+	  This tool is designed to get quickly started with leapp actor development     
+																					
+	Options:                                                                        
+	  --debug / --no-debug                                                          
+	  --version             Show the version and exit.                              
+	  -h, --help            Show this message and exit.                             
+																					
+	Commands:                                                                       
+	  discover                                                                      
+	  dump                                                                          
+	  new                                                                           
+	  new-actor                                                                     
+	  new-channel                                                                   
+	  new-model                                                                     
+	  new-project                                                                   
+	  new-tag                                                                       
+	  run                                                                           
+	  runx                                                                          
+	  workflow                                                                      
 ```
 
 ## A screen cast of the steps above
