@@ -20,5 +20,5 @@ Now you can enter the tutorial folder in which the project has been initialized:
 From here you can start creating your actors, tags, models and channels.
 
 ## A screen cast of the steps above
-![Create Project Tutorial Cast](create-project.gif)
+![Create Project Tutorial Cast](screencasts/create-project.gif)
 

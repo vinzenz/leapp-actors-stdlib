@@ -52,7 +52,7 @@ necessary code is already defined and it creates the class *ScanTag* which we wi
 later on.
 
 #### Screencast
-![Create Tag Tutorial Cast](create-tag.gif)
+![Create Tag Tutorial Cast](screencasts/create-tag.gif)
 
 ### Creating a channel
 
@@ -66,7 +66,7 @@ This time the folder channels has been created with a systeminfo.py file that pr
 the complete code and definition for the *SystemInfoChannel* class we will use in the model.
 
 #### Screencast
-![Create Channel Tutorial Cast](create-channel.gif)
+![Create Channel Tutorial Cast](screencasts/create-channel.gif)
 
 ### Creating a model
 
@@ -119,7 +119,7 @@ class Hostname(Model):
 Now we can save the file a go write an actor using the other parts.
 
 #### Screencast
-![Create Model Tutorial Cast](create-model.gif)
+![Create Model Tutorial Cast](screencasts/create-model.gif)
 
 
 ### Creating an actor
@@ -232,4 +232,4 @@ If you want to see the message it generated use the --print-output flag
 ```
 
 #### Screencast
-![Create Actor Tutorial Cast](create-actor.gif)
+![Create Actor Tutorial Cast](screencasts/create-actor.gif)

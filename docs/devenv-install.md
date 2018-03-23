@@ -41,4 +41,4 @@ Once the framework is installed in your virtualenv environment you can start usi
 ```
 
 ## A screen cast of the steps above
-![Installation Tutorial Cast](install.gif)
+![Installation Tutorial Cast](screencasts/install.gif)
