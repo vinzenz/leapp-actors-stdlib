@@ -2,14 +2,13 @@ import json as json_mod
 import os
 import sys
 
-import click
-
-from leapp.actors import get_actors, get_actor_metadata
+from leapp.actors import get_actor_metadata
 from leapp.channels import get_channels
 from leapp.models import get_models
 from leapp.repository.scan import scan_repo
 from leapp.tags import get_tags
 from leapp.tool.utils import find_project_basedir, get_project_name, requires_project
+from leapp.utils.clicmd import command, command_opt
 
 
 def _is_local(base_dir, cls):
@@ -57,10 +56,10 @@ def _get_model_details(model):
     return {'path': _get_class_file(model)}
 
 
-@click.command('discover')
-@click.option('--json', is_flag=True)
+@command('discover')
+@command_opt('json', is_flag=True)
 @requires_project
-def cli(json):
+def cli(args):
     base_dir = find_project_basedir('.')
     repository = scan_repo(base_dir)
     repository.load()
@@ -69,7 +68,7 @@ def cli(json):
     models = [model for model in get_models() if _is_local(base_dir, model)]
     channels = [channel for channel in get_channels() if _is_local(base_dir, channel)]
     tags = [tag for tag in get_tags() if _is_local(base_dir, tag)]
-    if not json:
+    if not args.json:
         _print_group('Models', models)
         _print_group('Channels', channels)
         _print_group('Actors', actors, name_resolver=lambda x: x.class_name, path_resolver=_get_actor_path)

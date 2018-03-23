@@ -1,14 +1,15 @@
 import os
 
-import click
 import sys
 
 from leapp.tool.utils import find_project_basedir, make_name, make_class_name
+from leapp.utils.clicmd import command_arg, command, UsageError
 
 
-@click.command('new-channel')
-@click.argument('channel-name')
-def cli(channel_name):
+@command('new-channel', help='Creates a new channel')
+@command_arg('channel-name')
+def cli(args):
+    channel_name = args.channel_name
     basedir = find_project_basedir('.')
 
     basedir = os.path.join(basedir, 'channels')
@@ -17,7 +18,7 @@ def cli(channel_name):
 
     channel_path = os.path.join(basedir, channel_name.lower() + '.py')
     if os.path.exists(channel_path):
-        raise click.UsageError("File already exists: {}".format(channel_path))
+        raise UsageError("File already exists: {}".format(channel_path))
 
     channel_path = os.path.join(basedir, channel_name.lower() + '.py')
     with open(channel_path, 'w') as f:

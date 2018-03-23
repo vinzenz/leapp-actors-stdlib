@@ -1,15 +1,16 @@
 import os
 
-import click
 import sys
 
 from leapp.tool.utils import find_project_basedir, make_class_name, requires_project
+from leapp.utils.clicmd import command_arg, command, UsageError
 
 
-@click.command('new-model')
-@click.argument('model-name')
+@command('new-model', help='Creates a new model')
+@command_arg('model-name')
 @requires_project
-def cli(model_name):
+def cli(args):
+    model_name = args.model_name
     basedir = find_project_basedir('.')
 
     basedir = os.path.join(basedir, 'models')
@@ -18,7 +19,7 @@ def cli(model_name):
 
     model_path = os.path.join(basedir, model_name.lower() + '.py')
     if os.path.exists(model_path):
-        raise click.UsageError("File already exists: {}".format(model_path))
+        raise UsageError("File already exists: {}".format(model_path))
 
     with open(model_path, 'w') as f:
         f.write('''from leapp.models import Model, fields

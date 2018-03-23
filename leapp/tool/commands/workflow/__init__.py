@@ -1,6 +1,6 @@
-import click
+from leapp.utils.clicmd import command
 
 
-@click.group('workflow')
-def workflow():
+@command('workflow', help='Workflow related commands')
+def workflow(*args):
     pass

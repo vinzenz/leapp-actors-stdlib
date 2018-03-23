@@ -2,12 +2,13 @@ import json
 import os
 import sys
 
-import click
+from leapp.utils.clicmd import command_arg, command
 
 
-@click.command('new-project')
-@click.argument('name')
-def cli(name):
+@command('new-project', help='Creates a new project')
+@command_arg('name')
+def cli(args):
+    name = args.name
     basedir = os.path.join('.', name)
     if not os.path.isdir(basedir):
         os.mkdir(basedir)

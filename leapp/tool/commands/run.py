@@ -1,20 +1,19 @@
 import json
 import sys
 
-import click
-
+from leapp.utils.clicmd import command, command_opt, command_arg
 from leapp.logger import configure_logger
 from leapp.tool.utils import find_project_basedir, requires_project
 from leapp.tool.channels import RunChannels
 from leapp.repository.scan import scan_repo
 
 
-@click.command('run')
-@click.argument('actor-name')
-@click.option('--save-output', is_flag=True)
-@click.option('--print-output', is_flag=True)
+@command('run', help='Execute the given actor')
+@command_arg('actor-name')
+@command_opt('--save-output', is_flag=True)
+@command_opt('--print-output', is_flag=True)
 @requires_project
-def cli(actor_name, save_output, print_output):
+def cli(args):
     log = configure_logger()
     basedir = find_project_basedir('.')
     repository = scan_repo(basedir)
@@ -26,9 +25,9 @@ def cli(actor_name, save_output, print_output):
 
 #    Actor.run([actor for actor in get_actors() if actor.__name__.lower() == actor_name.lower()][0](
 #        channels=channels, logger=actor_logger))
-    repository.lookup_actor(actor_name)(channels=channels, logger=actor_logger).run()
+    repository.lookup_actor(args.actor_name)(channels=channels, logger=actor_logger).run()
 
-    if save_output:
+    if args.save_output:
         channels.store()
-    if print_output:
+    if args.print_output:
         json.dump(channels.get_new(), sys.stdout, indent=2)

@@ -2,10 +2,9 @@ from __future__ import print_function
 import json
 import sys
 
-import click
-
 import leapp.workflows
 from leapp.tool.commands.workflow import workflow
+from leapp.utils.clicmd import command_arg
 from leapp.tool.utils import requires_project, load_all_from, find_project_basedir
 
 
@@ -17,9 +16,9 @@ def names(p):
 
 
 @workflow.command('dump')
-@click.argument('name')
+@command_arg('name')
 @requires_project
-def cli(name):
+def cli(args, extra):
     load_all_from(find_project_basedir('.'))
     wf = leapp.workflows.IPUWorkflow()
     print(wf.initial, wf.consumes, wf.produces)

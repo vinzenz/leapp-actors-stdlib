@@ -1,17 +1,20 @@
 import os
 
-import click
 
 from leapp.tool.commands.workflow import workflow
+from leapp.utils.clicmd import command_arg, command_opt
 from leapp.tool.utils import find_project_basedir, requires_project, make_class_name, make_name
 
 
-@workflow.command('new')
-@click.argument('name')
-@click.option('-s', '--short', 'short_name')
-@click.option('-c', '--class', 'class_name')
+@workflow.command('new', help='Creates a new workflow with the given name')
+@command_arg('name')
+@command_opt('short-name', short_name='s')
+@command_opt('class-name', short_name='c')
 @requires_project
-def cli(name, short_name, class_name):
+def cli(args):
+    class_name = args.class_name
+    short_name = args.short_name
+    name = args.name
     base_dir = find_project_basedir('.')
     workflows_dir = os.path.join(base_dir, 'workflows')
 

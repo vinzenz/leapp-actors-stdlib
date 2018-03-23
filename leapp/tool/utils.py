@@ -4,14 +4,14 @@ import os
 import pkgutil
 import re
 
-import click
+from leapp.utils.clicmd import UsageError
 
 
 def requires_project(f):
     @functools.wraps(f)
     def checker(*args, **kwargs):
         if not find_project_basedir('.'):
-            raise click.UsageError('This command must be executed from the project directory')
+            raise UsageError('This command must be executed from the project directory')
         return f(*args, **kwargs)
     return checker
 
