@@ -1,6 +1,7 @@
 import os
 
 import click
+import sys
 
 from leapp.tool.utils import find_project_basedir, make_class_name, make_name, requires_project
 
@@ -25,7 +26,7 @@ def cli(actor_name):
 
     actor_path = os.path.join(actor_dir, 'actor.py')
     if os.path.exists(actor_path):
-        raise click.UsageError("File already exists")
+        raise click.UsageError("File already exists: {}".format(actor_path))
 
     with open(actor_path, 'w') as f:
         f.write('''from leapp.actors import Actor
@@ -41,3 +42,6 @@ class {actor_class}(Actor):
     def process(self):
         pass
 '''.format(actor_class=make_class_name(actor_name), actor_name=make_name(actor_name)))
+
+    sys.stdout.write("New actor {} has been created at {}\n".format(make_class_name(actor_name),
+                                                                    os.path.realpath(actor_path)))

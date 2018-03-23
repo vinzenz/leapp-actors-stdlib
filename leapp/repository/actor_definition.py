@@ -107,10 +107,6 @@ class ActorDefinition(object):
         return self.discover()['class_name']
 
     @property
-    def path(self):
-        return self.discover()['path']
-
-    @property
     def name(self):
         return self.discover()['name']
 

@@ -25,7 +25,7 @@ def _print_group(name, items, name_resolver=lambda item: item.__name__,
 
 
 def _get_actor_path(actor, project_relative=True):
-    path = actor.path
+    path = actor.directory
     return os.path.relpath(path, find_project_basedir('.') if project_relative else os.getcwd())
 
 

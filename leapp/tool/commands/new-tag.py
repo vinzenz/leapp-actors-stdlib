@@ -1,6 +1,7 @@
 import os
 
 import click
+import sys
 
 from leapp.tool.utils import find_project_basedir, make_name, make_class_name, requires_project
 
@@ -17,13 +18,17 @@ def cli(tag_name):
     if not os.path.isdir(basedir):
         os.mkdir(basedir)
 
-    if os.path.exists(os.path.join(basedir, tag_name.lower() + '.py')):
-        raise click.UsageError("File already exists")
+    tag_path = os.path.join(basedir, tag_name.lower() + '.py')
+    if os.path.exists(tag_path):
+        raise click.UsageError("File already exists: {}".format(tag_path))
 
-    with open(os.path.join(basedir, tag_name.lower() + '.py'), 'w') as f:
+    with open(tag_path, 'w') as f:
         f.write('''from leapp.tags import Tag
 
 
 class {tag_name}Tag(Tag):
     name = '{tag}'
 '''.format(tag_name=make_class_name(tag_name), tag=make_name(tag_name)))
+
+    sys.stdout.write("New tag {} has been created in {}\n".format(make_class_name(tag_name),
+                                                                  os.path.realpath(tag_path)))

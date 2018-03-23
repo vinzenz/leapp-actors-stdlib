@@ -11,10 +11,10 @@ from leapp.repository.scan import scan_repo
 
 @click.command('run')
 @click.argument('actor-name')
-@click.option('--discard-output', is_flag=True)
+@click.option('--save-output', is_flag=True)
 @click.option('--print-output', is_flag=True)
 @requires_project
-def cli(actor_name, discard_output, print_output):
+def cli(actor_name, save_output, print_output):
     log = configure_logger()
     basedir = find_project_basedir('.')
     repository = scan_repo(basedir)
@@ -28,7 +28,7 @@ def cli(actor_name, discard_output, print_output):
 #        channels=channels, logger=actor_logger))
     repository.lookup_actor(actor_name)(channels=channels, logger=actor_logger).run()
 
-    if not discard_output:
+    if save_output:
         channels.store()
     if print_output:
         json.dump(channels.get_new(), sys.stdout, indent=2)
