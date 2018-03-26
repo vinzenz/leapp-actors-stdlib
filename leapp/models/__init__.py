@@ -1,8 +1,5 @@
 import sys
 
-from marshmallow import Schema
-from marshmallow.fields import Field
-from marshmallow.utils import missing
 from . import fields
 
 from leapp.exceptions import ModelDefinitionError
@@ -21,13 +18,8 @@ class ModelMeta(type):
                 raise ModelDefinitionError('Missing channel in Model {}'.format(name))
             channel.messages = tuple(set(channel.messages + (klass,)))
 
-        kls_attrs = {name: value for name, value in attrs.items() if isinstance(value, Field)}
+        kls_attrs = {name: value for name, value in attrs.items() if isinstance(value, fields.Field)}
         klass.fields = kls_attrs.copy()
-
-        # This allows to declare a custom schema or use the generated one from the Model based on marshmallow fields
-        if '__schema__' not in klass.__dict__.keys():
-            kls_attrs['__model__'] = klass
-            setattr(klass, '__schema__', type(klass.__name__ + 'Schema', (Schema,), kls_attrs))
 
         setattr(sys.modules[mcs.__module__], name, klass)
         return klass
@@ -37,19 +29,25 @@ class ModelMeta(type):
 
 
 class Model(with_metaclass(ModelMeta)):
-    __schema__ = None
-
     def __init__(self, *args, **kwargs):
+        init_method = kwargs.pop('init_method', 'from_initialization')
         super(Model, self).__init__()
-        for field in self.__class__.fields.keys():
-            # Default value support from Marshmallow uses 'missing' if it is not set
-            value = kwargs.get(field, self.__class__.fields[field].default)
-            if value is missing:
-                value = None
-            setattr(self, field, value)
+        for field in type(self).fields.keys():
+            getattr(type(self).fields[field], init_method)(kwargs, field, self)
+
+    @classmethod
+    def create(cls, data):
+        return cls(init_method='to_model', **data)
 
     def dump(self):
-        return self.__schema__().dump(self).data
+        result = {}
+        for field in type(self).fields.keys():
+            type(self).fields[field].to_builtin(self, field, result)
+        return result
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and \
+               all(getattr(self, name) == getattr(other, name) for name in sorted(type(self).fields.keys()))
 
 
 class ErrorModel(Model):

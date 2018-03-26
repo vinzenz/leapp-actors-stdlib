@@ -24,7 +24,7 @@ class BaseChannels(object):
         if not type:
             return self._data + self._new_data
         lookup = {model.__name__: model for model in types}
-        return (lookup[message['type']](**json.loads(message['message']['data']))
+        return (lookup[message['type']].create(json.loads(message['message']['data']))
                 for message in (self._data + self._data) if message['type'] in lookup)
 
 

@@ -54,7 +54,7 @@ class Actor(object):
         if self._channels:
             for arg in args:
                 if isinstance(arg, getattr(self.__class__, 'produces')):
-                    message_data = json.dumps(arg.__schema__().dump(arg).data, sort_keys=True)
+                    message_data = json.dumps(arg.dump(), sort_keys=True)
                     message_hash = hashlib.sha256(message_data).hexdigest()
                     self._channels.produce(arg.channel.name, {
                         'type': arg.__class__.__name__,
