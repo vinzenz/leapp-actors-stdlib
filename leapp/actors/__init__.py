@@ -13,8 +13,8 @@ from leapp.utils.meta import get_flattened_subclasses
 
 
 class Actor(object):
-    def __init__(self, channels=None, logger=None):
-        self._channels = channels
+    def __init__(self, messaging=None, logger=None):
+        self._messaging = messaging
         self.log = (logger or logging.getLogger('leapp.actors')).getChild(self.name)
 
     @property
@@ -51,12 +51,12 @@ class Actor(object):
             os.environ.pop('LEAPP_CURRENT_ACTOR', None)
 
     def produce(self, *args):
-        if self._channels:
+        if self._messaging:
             for arg in args:
                 if isinstance(arg, getattr(self.__class__, 'produces')):
                     message_data = json.dumps(arg.dump(), sort_keys=True)
                     message_hash = hashlib.sha256(message_data).hexdigest()
-                    self._channels.produce(arg.channel.name, {
+                    self._messaging.produce(arg.channel.name, {
                         'type': arg.__class__.__name__,
                         'actor': self.name,
                         'channel': arg.channel.name,
@@ -68,8 +68,8 @@ class Actor(object):
                     })
 
     def consume(self, *types):
-        if self._channels:
-            return self._channels.consume(*types)
+        if self._messaging:
+            return self._messaging.consume(*types)
         return ()
 
 

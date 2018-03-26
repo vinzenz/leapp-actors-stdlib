@@ -8,7 +8,8 @@ from multiprocessing import Process, Queue
 import leapp.libraries.actor
 from leapp.actors import get_actors, get_actor_metadata
 from leapp.exceptions import ActorInspectionFailedError, MultipleActorsError, UnsupportedDefinitionKindError
-from leapp.repository import DefinitionKind, library_loader
+from leapp.repository import DefinitionKind
+from leapp.repository.loader import library_loader
 
 
 def inspect_actor(definition, result_queue):
@@ -17,18 +18,18 @@ def inspect_actor(definition, result_queue):
 
 
 class ActorCallContext(object):
-    def __init__(self, definition, logger, channels):
+    def __init__(self, definition, logger, messaging):
         self.definition = definition
         self.logger = logger
-        self.channels = channels
+        self.messaging = messaging
 
     @staticmethod
-    def _do_run(logger, channels, definition, args, kwargs):
+    def _do_run(logger, messaging, definition, args, kwargs):
         definition.load()
-        get_actors()[0](logger=logger, channels=channels).run(*args, **kwargs)
+        get_actors()[0](logger=logger, messaging=messaging).run(*args, **kwargs)
 
     def run(self, *args, **kwargs):
-        p = Process(target=self._do_run, args=(self.logger, self.channels, self.definition, args, kwargs))
+        p = Process(target=self._do_run, args=(self.logger, self.messaging, self.definition, args, kwargs))
         p.start()
         p.join()
 
@@ -91,8 +92,8 @@ class ActorDefinition(object):
                     tag.actors += (self,)
         return self._discovery
 
-    def __call__(self, channels=None, logger=None):
-        return ActorCallContext(definition=self, channels=channels, logger=logger)
+    def __call__(self, messaging=None, logger=None):
+        return ActorCallContext(definition=self, messaging=messaging, logger=logger)
 
     @property
     def consumes(self):
