@@ -6,7 +6,7 @@ import uuid
 from leapp.utils.meta import with_metaclass, get_flattened_subclasses
 from leapp.workflows.phases import Phase
 from leapp.workflows.phaseactors import PhaseActors
-from leapp.tool.channels import DaemonAPIChannels
+from leapp.tool.messages import RemoteMessageAPI
 
 
 def _phase_sorter_key(a):
@@ -84,7 +84,7 @@ class Workflow(with_metaclass(WorkflowMeta)):
                     phase=phase[0].name, stage=stage.stage))
                 for actor in stage.actors:
                     current_logger.info("Executing actor {actor}".format(actor=actor.name))
-                    channels = DaemonAPIChannels()
+                    channels = RemoteMessageAPI()
                     channels.load(actor.consumes)
                     actor(logger=current_logger, channels=channels).run(*args, **kwargs)
 

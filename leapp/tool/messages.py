@@ -7,7 +7,7 @@ from leapp.tool.utils import get_project_metadata, find_project_basedir
 from leapp.utils.actorapi import get_actor_api
 
 
-class BaseChannels(object):
+class BaseMessageAPI(object):
     def __init__(self):
         self._data = []
         self._new_data = []
@@ -28,13 +28,13 @@ class BaseChannels(object):
                 for message in (self._data + self._data) if message['type'] in lookup)
 
 
-class DaemonAPIChannels(BaseChannels):
+class RemoteMessageAPI(BaseMessageAPI):
     def __init__(self):
-        super(DaemonAPIChannels, self).__init__()
+        super(RemoteMessageAPI, self).__init__()
         self._session = get_actor_api()
 
     def produce(self, channel, message):
-        message = super(DaemonAPIChannels, self).produce(channel, message)
+        message = super(RemoteMessageAPI, self).produce(channel, message)
         self._session.post('leapp://localhost/actors/v1/message', json=message)
         return message
 
@@ -47,9 +47,9 @@ class DaemonAPIChannels(BaseChannels):
         self._data = request.json()['messages']
 
 
-class RunChannels(BaseChannels):
+class ProjectLocalMessageAPI(BaseMessageAPI):
     def __init__(self):
-        super(RunChannels, self).__init__()
+        super(ProjectLocalMessageAPI, self).__init__()
         self._manager = multiprocessing.Manager()
         self._data = self._manager.list()
         self._new_data = self._manager.list()

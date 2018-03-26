@@ -4,7 +4,7 @@ import sys
 from leapp.utils.clicmd import command, command_opt, command_arg
 from leapp.logger import configure_logger
 from leapp.tool.utils import find_project_basedir, requires_project
-from leapp.tool.channels import RunChannels
+from leapp.tool.messages import ProjectLocalMessageAPI
 from leapp.repository.scan import scan_repo
 
 
@@ -19,7 +19,7 @@ def cli(args):
     repository = scan_repo(basedir)
     repository.load()
 
-    channels = RunChannels()
+    channels = ProjectLocalMessageAPI()
     channels.load()
     actor_logger = log.getChild('actors')
 
