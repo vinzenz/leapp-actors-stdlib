@@ -1,7 +1,7 @@
 import sys
 
 
-__all__ = ('string_types', 'IS_PYTHON2', 'IS_PYTHON3', 'httplib', 'urllib3')
+__all__ = ('string_types', 'IS_PYTHON2', 'IS_PYTHON3', 'httplib')
 
 IS_PYTHON2 = sys.version_info < (3,)
 IS_PYTHON3 = not IS_PYTHON2

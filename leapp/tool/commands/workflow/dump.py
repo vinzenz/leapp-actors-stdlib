@@ -24,4 +24,3 @@ def cli(args, extra):
     print(wf.initial, wf.consumes, wf.produces)
     json.dump(names(wf.phase_actors), sys.stdout, indent=2)
     sys.stdout.write('\n')
-

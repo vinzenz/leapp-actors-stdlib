@@ -35,7 +35,7 @@ class LeappAuditHandler(logging.Handler):
             }
 
             self.session.post(self.url, json=log_data, timeout=0.1)
-        except RequestException as e:
+        except RequestException:
             pass
 
 

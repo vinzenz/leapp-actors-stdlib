@@ -86,4 +86,3 @@ def test_actor_phases_order():
     assert len(phase_actors.actors) == 2
     assert phase_actors.actors[0] is CycleActor2
     assert phase_actors.actors[1] is CycleActor3
-

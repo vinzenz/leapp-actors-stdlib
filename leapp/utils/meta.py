@@ -12,5 +12,3 @@ def with_metaclass(meta_class, base_class=object):
 def get_flattened_subclasses(cls):
     classes = cls.__subclasses__()
     return list(itertools.chain(classes, *map(lambda x: get_flattened_subclasses(x), classes)))
-
-

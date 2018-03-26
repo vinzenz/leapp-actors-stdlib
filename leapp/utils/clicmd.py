@@ -1,8 +1,3 @@
-import argparse
-
-import sys
-
-
 class UsageError(Exception):
     def __init__(self, message):
         super(UsageError, self).__init__(message)

@@ -7,7 +7,6 @@ import leapp.libraries.common
 from logging import getLogger
 from leapp.exceptions import ModuleNameAlreadyExistsError, RepoItemPathDoesNotExistError, UnsupportedDefinitionKindError
 from leapp.repository.definition import DefinitionKind
-from leapp.repository.loader import library_loader
 from leapp.repository.actor_definition import ActorDefinition
 from leapp.tool.utils import get_project_name
 

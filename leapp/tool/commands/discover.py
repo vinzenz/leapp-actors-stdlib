@@ -83,4 +83,3 @@ def cli(args):
             'tags': {tag.name: _get_tag_details(tag) for tag in tags}
         }
         json_mod.dump(output, sys.stdout, indent=2)
-

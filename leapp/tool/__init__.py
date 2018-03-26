@@ -49,4 +49,3 @@ def main():
     cli.command.apply_parser(s, parser=parser)
     args = parser.parse_args()
     args.func(args)
-
