@@ -25,12 +25,21 @@ class Field(object):
     """
     Field is the base of all supported fields
     """
-    def __init__(self, default=missing, required=False, allow_null=False):
+    @property
+    def help(self):
+        return self._help or 'No documentation provided for this field `{}`'.format(type(self).__name__)
+
+    def __init__(self, default=missing, required=False, allow_null=False, help=None):
         """
         :param default: Default value to use if the field is not set
         :param required: Marks the field as mandatory
+        :type required: bool
         :param allow_null: Whether or not the field is allowed to be None
+        :type allow_null: bool
+        :param help: Documentation string for generating model documentation
+        :type help: str
         """
+        self._help = help
         self._default = default
         self._required = required
         self._allow_null = allow_null
@@ -140,10 +149,12 @@ class BuiltinField(Field):
 
     @property
     def _model_type(self):
-        pass
+        """ Returns the type to be used as model type representation """
+        raise NotImplementedError("_model_type needs to be overridden")
 
     @property
     def _builtin_type(self):
+        """ Returns the type to be used as model type representation """
         return self._model_type
 
     def _validate_model_value(self, value, name):
@@ -274,9 +285,9 @@ class List(Field):
         :type required: bool
         :param allow_null: Whether or not the field is allowed to be None
         :type allow_null: bool
+        :param help: Documentation string for generating model documentation
+        :type help: str
         """
-        if kwargs.get('required', False) and kwargs.get('default', missing) is missing:
-            kwargs['default'] = []
         super(List, self).__init__(**kwargs)
         if not isinstance(elem_field, Field):
             raise ModelMisuseError("elem_field must be a instance of a type derived from Field")
@@ -338,6 +349,8 @@ class Nested(Field):
         :type required: bool
         :param allow_null: Whether or not the field is allowed to be None
         :type allow_null: bool
+        :param help: Documentation string for generating model documentation
+        :type help: str
         """
         super(Nested, self).__init__(**kwargs)
         from leapp.models import Model
