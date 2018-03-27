@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import socket
 
-from leapp.tool.utils import get_project_metadata, find_project_basedir
+from leapp.snactor.utils import get_project_metadata, find_project_basedir
 from leapp.utils.actorapi import get_actor_api
 
 

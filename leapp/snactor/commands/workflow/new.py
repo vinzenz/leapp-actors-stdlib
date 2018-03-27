@@ -1,9 +1,9 @@
 import os
 
 
-from leapp.tool.commands.workflow import workflow
+from leapp.snactor.commands.workflow import workflow
 from leapp.utils.clicmd import command_arg, command_opt
-from leapp.tool.utils import find_project_basedir, requires_project, make_class_name, make_name
+from leapp.snactor.utils import find_project_basedir, requires_project, make_class_name, make_name
 
 
 @workflow.command('new', help='Creates a new workflow with the given name')

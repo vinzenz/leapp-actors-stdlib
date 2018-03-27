@@ -2,15 +2,15 @@ import os
 import pkgutil
 import socket
 
-from leapp.tool import commands
-from leapp.tool.commands import workflow
+from leapp.snactor import commands
+from leapp.snactor.commands import workflow
 from leapp.utils.clicmd import command, command_opt
 
 
 __version__ = '1.0'
-SHORT_HELP = "actor-tool is a leapp actor project management tool"
+SHORT_HELP = "actor-snactor is a leapp actor project management snactor"
 LONG_HELP = """
-This tool is designed to get quickly started with leapp actor development
+This snactor is designed to get quickly started with leapp actor development
 """
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 

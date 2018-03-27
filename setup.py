@@ -6,6 +6,6 @@ setup(
     install_requires=['requests'],
     entry_points='''
         [console_scripts]
-        snactor=leapp.tool:main
+        snactor=leapp.snactor:main
     '''
 )

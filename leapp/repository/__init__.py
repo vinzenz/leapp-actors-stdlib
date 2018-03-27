@@ -8,7 +8,7 @@ from logging import getLogger
 from leapp.exceptions import ModuleNameAlreadyExistsError, RepoItemPathDoesNotExistError, UnsupportedDefinitionKindError
 from leapp.repository.definition import DefinitionKind
 from leapp.repository.actor_definition import ActorDefinition
-from leapp.tool.utils import get_project_name
+from leapp.snactor.utils import get_project_name
 
 
 class Repository(object):
@@ -23,7 +23,7 @@ class Repository(object):
         name = name.lower()
         for actor in self.actors:
             actor_name = actor.name.lower()
-            actor_class = actor.discover()['class_name'].lower()
+            actor_class = actor.class_name.lower()
             if actor_name == name or actor_class == name:
                 return actor
         return None
@@ -60,7 +60,7 @@ class Repository(object):
         self.log.debug("Loading repository provided common libraries")
         self._load_libraries()
 
-        self.log.debug("Extending PATH for common tool paths")
+        self.log.debug("Extending PATH for common snactor paths")
         self._extend_environ_paths('PATH', self.tools)
         self.log.debug("Extending LEAPP_COMMON_FILES for common file paths")
         self._extend_environ_paths('LEAPP_COMMON_FILES', self.files)

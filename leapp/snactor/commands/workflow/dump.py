@@ -3,9 +3,9 @@ import json
 import sys
 
 import leapp.workflows
-from leapp.tool.commands.workflow import workflow
+from leapp.snactor.commands.workflow import workflow
 from leapp.utils.clicmd import command_arg
-from leapp.tool.utils import requires_project, load_all_from, find_project_basedir
+from leapp.snactor.utils import requires_project, load_all_from, find_project_basedir
 
 
 separator = (type('Fake', (object,), {'name': '=============='})(),)

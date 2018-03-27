@@ -7,7 +7,7 @@ from leapp.channels import get_channels
 from leapp.models import get_models
 from leapp.repository.scan import scan_repo
 from leapp.tags import get_tags
-from leapp.tool.utils import find_project_basedir, get_project_name, requires_project
+from leapp.snactor.utils import find_project_basedir, get_project_name, requires_project
 from leapp.utils.clicmd import command, command_opt
 
 

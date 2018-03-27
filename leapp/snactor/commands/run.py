@@ -3,8 +3,8 @@ import sys
 
 from leapp.utils.clicmd import command, command_opt, command_arg
 from leapp.logger import configure_logger
-from leapp.tool.utils import find_project_basedir, requires_project
-from leapp.tool.messaging import ProjectLocalMessaging
+from leapp.snactor.utils import find_project_basedir, requires_project
+from leapp.messaging import ProjectLocalMessaging
 from leapp.repository.scan import scan_repo
 
 
@@ -24,7 +24,6 @@ def cli(args):
     actor_logger = log.getChild('actors')
 
     repository.lookup_actor(args.actor_name)(messaging=messaging, logger=actor_logger).run()
-
     if args.save_output:
         messaging.store()
     if args.print_output:
