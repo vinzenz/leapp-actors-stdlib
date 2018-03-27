@@ -27,6 +27,9 @@ class Field(object):
     """
     @property
     def help(self):
+        """
+        :return: Documentation help string defining what the field is about
+        """
         return self._help or 'No documentation provided for this field `{}`'.format(type(self).__name__)
 
     def __init__(self, default=missing, required=False, allow_null=False, help=None):
@@ -149,12 +152,16 @@ class BuiltinField(Field):
 
     @property
     def _model_type(self):
-        """ Returns the type to be used as model type representation """
+        """
+        :return: Returns the type to be used as model type representation
+        """
         raise NotImplementedError("_model_type needs to be overridden")
 
     @property
     def _builtin_type(self):
-        """ Returns the type to be used as model type representation """
+        """
+        :return: Returns the type to be used as builtin type representation (e.g. string)
+        """
         return self._model_type
 
     def _validate_model_value(self, value, name):
