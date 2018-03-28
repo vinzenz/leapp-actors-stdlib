@@ -25,6 +25,9 @@ class Command(object):
         self.parent = None
         self.parser = None
 
+    def get_inheritable_options(self):
+        return [option for option in self._options if option[2].get('inherit')]
+
     def called(self, args):
         if self.parent:
             self.parent.called(args)
@@ -42,7 +45,8 @@ class Command(object):
             self.parser = sparser.add_parser(self.name, help=self.help)
 
         self.parser.set_defaults(prog=self.parser.prog, func=self.called)
-        for args, kwargs, internal in self._options:
+        inheritable = [] if not self.parent else self.parent.get_inheritable_options()
+        for args, kwargs, internal in self._options + inheritable:
             self.parser.add_argument(*args, **kwargs)
 
         if self._sub_commands:
@@ -74,7 +78,8 @@ class Command(object):
         internal = kwargs.pop('internal', {})
         self._options.append((args, kwargs, internal))
 
-    def add_option(self, name, short_name='', help='', is_flag=False, value_type=str, wrapped=None, action=None):
+    def add_option(self, name, short_name='', help='', is_flag=False, inherit=False, value_type=str, wrapped=None,
+                   action=None):
         name = name.lstrip('-')
         names = ['--' + name]
         kwargs = {}
@@ -89,7 +94,7 @@ class Command(object):
                 action = 'store_true'
             elif value_type:
                 kwargs['type'] = value_type
-        self._add_opt(*names, help=help, action=action, internal={'wrapped': wrapped}, **kwargs)
+        self._add_opt(*names, help=help, action=action, internal={'wrapped': wrapped, 'inherit': inherit}, **kwargs)
         return self
 
     def add_argument(self, name, value_type=None, help='', wrapped=None):

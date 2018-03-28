@@ -1,11 +1,15 @@
 import json
-import types
 from datetime import datetime
 
 import pytest
+import six
 
 from leapp.models import Model, fields
 from leapp.channels import Channel
+
+
+class BadBuiltinField(fields.BuiltinField):
+    pass
 
 
 class ModelTestChannel(Channel):
@@ -52,6 +56,11 @@ class AllFieldTypesModel(Model):
 class RequiredFieldModel(Model):
     channel = ModelTestChannel
     field = fields.String(required=True)
+
+
+def test_builtin_needs_override():
+    with pytest.raises(NotImplementedError):
+        BadBuiltinField(allow_null=True, required=False).to_builtin(None, '', None)
 
 
 def test_base_usage():
@@ -290,7 +299,7 @@ BASIC_TYPE_FIXTURES = (
 
 
 @pytest.mark.parametrize("case", BASIC_TYPE_FIXTURES)
-def test_basic_types_json_serializable(case):
+def test_basic_types_sanity(case):
     source = case.make_object(case.value)
     target = {}
     case.field_type(required=True, allow_null=False).to_builtin(source, case.name, target)
@@ -344,3 +353,5 @@ def test_basic_types_json_serializable(case):
     field.to_builtin(source, case.name, target)
     assert target.get(case.name) is None
     json.dumps(target)
+
+    assert isinstance(field.help, six.string_types)

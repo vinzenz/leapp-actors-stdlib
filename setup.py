@@ -1,11 +1,12 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='leapp-actor-standard-library',
+    name='leapp',
     packages=find_packages(),
     install_requires=['requests'],
     entry_points='''
         [console_scripts]
         snactor=leapp.snactor:main
+        leapp=leapp.cli:main
     '''
 )
