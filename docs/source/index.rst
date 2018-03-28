@@ -16,6 +16,7 @@ Welcome to Leapp's documentation!
    :caption: Contents:
    :glob:
 
+   tutorials
    contributing
    leapp.*
    modules
