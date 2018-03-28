@@ -3,14 +3,14 @@ class LeappError(Exception):
         super(LeappError, self).__init__(message)
 
 
-class InvalidChannelItemError(LeappError):
+class InvalidTopicItemError(LeappError):
     def __init__(self, message):
-        super(InvalidChannelItemError, self).__init__(message)
+        super(InvalidTopicItemError, self).__init__(message)
 
 
-class InvalidChannelDefinitionError(LeappError):
+class InvalidTopicDefinitionError(LeappError):
     def __init__(self, message):
-        super(InvalidChannelDefinitionError, self).__init__(message)
+        super(InvalidTopicDefinitionError, self).__init__(message)
 
 
 class InvalidTagDefinitionError(LeappError):

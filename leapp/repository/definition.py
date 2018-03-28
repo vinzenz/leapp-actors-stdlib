@@ -5,7 +5,7 @@ class DefinitionKind(object):
 
     ACTOR = _Kind('actor')
     MODEL = _Kind('model')
-    CHANNEL = _Kind('channel')
+    TOPIC = _Kind('topic')
     TAG = _Kind('tag')
     WORKFLOW = _Kind('workflow')
     LIBRARIES = _Kind('libraries')
@@ -13,5 +13,5 @@ class DefinitionKind(object):
     FILES = _Kind('files')
     TESTS = _Kind('tests')
 
-    REPO_WHITELIST = (ACTOR, MODEL, CHANNEL, TAG, WORKFLOW, TOOLS, LIBRARIES, FILES)
+    REPO_WHITELIST = (ACTOR, MODEL, TOPIC, TAG, WORKFLOW, TOOLS, LIBRARIES, FILES)
     ACTOR_WHITELIST = (TOOLS, LIBRARIES, FILES, TESTS)

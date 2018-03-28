@@ -26,7 +26,7 @@ def cli(args):
 
 
 class {model_name}(Model):
-    channel = None #  TODO: import appropriate channel and set it here
+    topic = None #  TODO: import appropriate topic and set it here
 '''.format(model_name=make_class_name(model_name)))
 
     sys.stdout.write("New model {} has been created in {}\n".format(make_class_name(model_name),

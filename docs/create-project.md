@@ -2,7 +2,7 @@
 
 Leapp uses repositories with a defined [filesystem layout](filesystem-layout.md)
 The snactor tool helps you to create a project repository in which you can develop and test your
-actors, tags, models and channels.
+actors, tags, models and topics.
 
 To create a new project called *tutorial* you run the snactor tool like this:
 
@@ -17,7 +17,7 @@ Now you can enter the tutorial folder in which the project has been initialized:
     $ ls -a
 ```
 
-From here you can start creating your actors, tags, models and channels.
+From here you can start creating your actors, tags, models and topics.
 
 ## A screen cast of the steps above
 ![Create Project Tutorial Cast](screencasts/create-project.gif)

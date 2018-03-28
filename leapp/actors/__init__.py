@@ -56,10 +56,10 @@ class Actor(object):
                 if isinstance(arg, getattr(self.__class__, 'produces')):
                     message_data = json.dumps(arg.dump(), sort_keys=True)
                     message_hash = hashlib.sha256(message_data).hexdigest()
-                    self._messaging.produce(arg.channel.name, {
+                    self._messaging.produce(arg.topic.name, {
                         'type': arg.__class__.__name__,
                         'actor': self.name,
-                        'channel': arg.channel.name,
+                        'topic': arg.topic.name,
                         'stamp': datetime.datetime.utcnow().isoformat() + 'Z',
                         'message': {
                             'data': message_data,

@@ -47,8 +47,8 @@ class Repository(object):
         self.log.debug("Loading repository %s", self.name)
         self.log.debug("Loading tag modules")
         self._load_modules(self.tags)
-        self.log.debug("Loading channel modules")
-        self._load_modules(self.channels)
+        self.log.debug("Loading topic modules")
+        self._load_modules(self.topics)
         self.log.debug("Loading model modules")
         self._load_modules(self.models)
 
@@ -99,7 +99,7 @@ class Repository(object):
         return {
             'repo_dir': self._repo_dir,
             'actors': [a.dump() for a in self.actors],
-            'channels': self.relative_paths(self.channels),
+            'topics': self.relative_paths(self.topics),
             'models': self.relative_paths(self.models),
             'tags': self.relative_paths(self.tags),
             'workflows': self.relative_paths(self.workflows),
@@ -120,8 +120,8 @@ class Repository(object):
         return tuple(self._definitions.get(DefinitionKind.ACTOR, ()))
 
     @property
-    def channels(self):
-        return tuple(self._definitions.get(DefinitionKind.CHANNEL, ()))
+    def topics(self):
+        return tuple(self._definitions.get(DefinitionKind.TOPIC, ()))
 
     @property
     def models(self):

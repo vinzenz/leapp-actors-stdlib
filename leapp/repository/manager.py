@@ -28,8 +28,8 @@ class RepositoryManager(object):
         return tuple(itertools.chain(*[repo.actors for repo in self._repos]))
 
     @property
-    def channels(self):
-        return tuple(itertools.chain(*[repo.channels for repo in self._repos]))
+    def topics(self):
+        return tuple(itertools.chain(*[repo.topics for repo in self._repos]))
 
     @property
     def models(self):

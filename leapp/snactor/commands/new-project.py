@@ -17,6 +17,6 @@ def cli(args):
         with open(os.path.join(project_dir, 'info'), 'w') as f:
             json.dump({
                 'name': name,
-                'channel_data': {}
+                'messages': {}
             }, f)
         sys.stdout.write("New project {} has been created in {}\n".format(name, os.path.realpath(name)))

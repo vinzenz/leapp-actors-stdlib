@@ -31,7 +31,7 @@ Once the framework is installed in your virtualenv environment you can start usi
 	  dump
 	  new
 	  new-actor
-	  new-channel
+	  new-topic
 	  new-model
 	  new-project
 	  new-tag

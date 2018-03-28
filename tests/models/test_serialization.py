@@ -5,44 +5,44 @@ import pytest
 import six
 
 from leapp.models import Model, fields
-from leapp.channels import Channel
+from leapp.topics import Topic
 
 
 class BadBuiltinField(fields.BuiltinField):
     pass
 
 
-class ModelTestChannel(Channel):
-    name = 'model-test-channel'
+class ModelTestTopic(Topic):
+    name = 'model-test-topic'
 
 
 class BasicModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     message = fields.String(required=True, default='Default Value')
 
 
 class WithStringListModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     messages = fields.List(fields.String(), required=True)
 
 
 class WithNestedModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     basic = fields.Nested(BasicModel, required=False, allow_null=True)
 
 
 class WithRequiredNestedModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     basic = fields.Nested(BasicModel, required=True)
 
 
 class WithNestedListModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     items = fields.List(fields.Nested(BasicModel), required=False)
 
 
 class AllFieldTypesModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     float_field = fields.Float(default=3.14, required=True)
     number_int_field = fields.Number(default=1.2, required=True)
     number_float_field = fields.Number(default=2, required=True)
@@ -54,7 +54,7 @@ class AllFieldTypesModel(Model):
 
 
 class RequiredFieldModel(Model):
-    channel = ModelTestChannel
+    topic = ModelTestTopic
     field = fields.String(required=True)
 
 
@@ -144,17 +144,17 @@ def test_field_types():
 def test_misuse_wrong_list_element_parameter():
     with pytest.raises(fields.ModelMisuseError):
         class RaisesNonFieldType(Model):
-            channel = ModelTestChannel
+            topic = ModelTestTopic
             boo = fields.List('')
 
     with pytest.raises(fields.ModelMisuseError):
         class RaisesNonFieldInstance(Model):
-            channel = ModelTestChannel
+            topic = ModelTestTopic
             boo = fields.List(str)
 
     with pytest.raises(fields.ModelMisuseError):
         class RaisesNonInstance(Model):
-            channel = ModelTestChannel
+            topic = ModelTestTopic
             boo = fields.List(fields.String)
 
 

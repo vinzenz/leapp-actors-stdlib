@@ -4,19 +4,19 @@ from . import fields
 
 from leapp.exceptions import ModelDefinitionError
 from leapp.utils.meta import get_flattened_subclasses, with_metaclass
-from leapp.channels import OutputOnlyChannel, ErrorChannel
+from leapp.topics import Topic, ErrorTopic
 
 
 class ModelMeta(type):
     def __new__(mcs, name, bases, attrs):
         klass = super(ModelMeta, mcs).__new__(mcs, name, bases, attrs)
 
-        # Every model has to be bound to a channel
+        # Every model has to be bound to a topic
         if klass.__name__ != 'Model' and issubclass(klass, ModelMeta):
-            channel = getattr(klass, 'channel', None)
-            if not channel or not issubclass(channel, OutputOnlyChannel):
-                raise ModelDefinitionError('Missing channel in Model {}'.format(name))
-            channel.messages = tuple(set(channel.messages + (klass,)))
+            topic = getattr(klass, 'topic', None)
+            if not topic or not issubclass(topic, Topic):
+                raise ModelDefinitionError('Missing topic in Model {}'.format(name))
+            topic.messages = tuple(set(topic.messages + (klass,)))
 
         kls_attrs = {name: value for name, value in attrs.items() if isinstance(value, fields.Field)}
         klass.fields = kls_attrs.copy()
@@ -51,7 +51,7 @@ class Model(with_metaclass(ModelMeta)):
 
 
 class ErrorModel(Model):
-    channel = ErrorChannel
+    topic = ErrorTopic
 
     message = fields.String(required=True)
     actor = fields.String(required=True)

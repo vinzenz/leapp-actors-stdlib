@@ -3,7 +3,7 @@ import os
 import sys
 
 from leapp.actors import get_actor_metadata
-from leapp.channels import get_channels
+from leapp.topics import get_topics
 from leapp.models import get_models
 from leapp.repository.scan import scan_repo
 from leapp.tags import get_tags
@@ -47,9 +47,9 @@ def _get_tag_details(tag):
             'name': tag.name}
 
 
-def _get_channel_details(channel):
-    return {'name': channel().name,
-            'path': _get_class_file(channel)}
+def _get_topic_details(topic):
+    return {'name': topic().name,
+            'path': _get_class_file(topic)}
 
 
 def _get_model_details(model):
@@ -66,18 +66,18 @@ def cli(args):
 
     actors = [actor for actor in repository.actors]
     models = [model for model in get_models() if _is_local(base_dir, model)]
-    channels = [channel for channel in get_channels() if _is_local(base_dir, channel)]
+    topics = [topic for topic in get_topics() if _is_local(base_dir, topic)]
     tags = [tag for tag in get_tags() if _is_local(base_dir, tag)]
     if not args.json:
         _print_group('Models', models)
-        _print_group('Channels', channels)
+        _print_group('Topics', topics)
         _print_group('Actors', actors, name_resolver=lambda x: x.class_name, path_resolver=_get_actor_path)
         _print_group('Tags', tags)
     else:
         output = {
             'project': get_project_name(base_dir),
             'base_dir': base_dir,
-            'channels': {channel.__name__: _get_channel_details(channel) for channel in channels},
+            'topics': {topic.__name__: _get_topic_details(topic) for topic in topics},
             'models': {model.__name__: _get_model_details(model) for model in models},
             'actors': {actor.class_name: _get_actor_details(actor) for actor in actors},
             'tags': {tag.name: _get_tag_details(tag) for tag in tags}

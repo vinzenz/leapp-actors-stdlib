@@ -15,9 +15,9 @@ To send messages between actors a model has to be created that describes the for
 message and acts at the same time as an object to access the data. If you know ORM libraries,
 this works pretty similar
 
-### Channels
-Channels are used to classify the purpose of a message and every Model has to have an assigned
-channel.
+### Topics
+Topic are used to classify the purpose of a message and every Model has to have an assigned
+topic.
 
 ### Tags
 Tags are used by the framework to be able to query the repository for actors that should be
@@ -54,24 +54,24 @@ later on.
 #### Screencast
 ![Create Tag Tutorial Cast](screencasts/create-tag.gif)
 
-### Creating a channel
+### Creating a topic
 
-Next we will have to create a channel, which we will call *SystemInfo* channel
+Next we will have to create a topic, which we will call *SystemInfo* topic
 
 ```shell
-    $ snactor new-channel SystemInfo
+    $ snactor new-topic SystemInfo
 ```
 
-This time the folder channels has been created with a systeminfo.py file that provides
-the complete code and definition for the *SystemInfoChannel* class we will use in the model.
+This time the folder topics has been created with a systeminfo.py file that provides
+the complete code and definition for the *SystemInfoTopic* class we will use in the model.
 
 #### Screencast
-![Create Channel Tutorial Cast](screencasts/create-channel.gif)
+![Create Topic Tutorial Cast](screencasts/create-topic.gif)
 
 ### Creating a model
 
 Now we have to create the model we want to use for sending the message. We will call the
-model *Hostname* and have it assigned to the *SystemInfoChannel*
+model *Hostname* and have it assigned to the *SystemInfoTopic*
 
 ```shell
    $ snactor new-model Hostname
@@ -84,24 +84,24 @@ from leapp.models import Model, fields
 
 
 class Hostname(Model):
-    channel = None #  TODO: import appropriate channel and set it here
+    topic = None #  TODO: import appropriate topic and set it here
 ```
 
-As the comment says, we will have to import the SystemInfoChannel and assign it to
-the channel variable of the Hostname class.
+As the comment says, we will have to import the SystemInfoTopic and assign it to
+the topic variable of the Hostname class.
 
-You can import the SystemInfoChannel class like this:
+You can import the SystemInfoTopic class like this:
 ```python
-from leapp.channels import SystemInfoChannel
+from leapp.topics import SystemInfoTopic
 ```
 
-After the channel has been assigned we will create a new field for the message
+After the topic has been assigned we will create a new field for the message
 called name, which is supposed to be a string. This can be accomplished by
 setting the name field like this:
 
 ```python
 class Hostname(Model):
-    channel = SystemInfoChannel
+    topic = SystemInfoTopic
     name = fields.String()
 ```
 
@@ -112,7 +112,7 @@ value.
 
 ```python
 class Hostname(Model):
-    channel = SystemInfoChannel
+    topic = SystemInfoTopic
     name = fields.String(default='localhost.localdomain')
 ```
 
@@ -226,7 +226,7 @@ If you want to see the message it generated use the --print-output flag
 		  "data": "{\"name\": \"actor-developer\"}"
 		},
 		"type": "Hostname",
-		"channel": "system_info"
+		"topic": "system_info"
 	  }
 	]
 ```

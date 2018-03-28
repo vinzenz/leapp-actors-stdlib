@@ -42,7 +42,7 @@ def load_modules_from(path, use_repo=None):
 
 
 def load_all_from(basedir, use_repo=None):
-    for directory in ('channels', 'models', 'tags', 'actors', 'workflows'):  # Order is NOT arbitrary - keep the order
+    for directory in ('topics', 'models', 'tags', 'actors', 'workflows'):  # Order is NOT arbitrary - keep the order
         modules_dir = os.path.join(basedir, directory)
         load_modules_from(modules_dir, use_repo=use_repo if directory == 'actors' else None)
 

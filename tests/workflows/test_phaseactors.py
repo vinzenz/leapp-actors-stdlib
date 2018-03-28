@@ -1,7 +1,7 @@
 import pytest
 
 from leapp.actors import Actor, get_actors
-from leapp.channels import Channel
+from leapp.topics import Topic
 from leapp.exceptions import CyclingDependenciesError
 from leapp.models import Model
 from leapp.tags import Tag
@@ -16,16 +16,16 @@ class PhaseActorsModelsTag1(Tag):
     name = 'phase-actor-models1'
 
 
-class CycleChannel(Channel):
+class CycleTopic(Topic):
     name = 'cycle'
 
 
 class CycleModel1(Model):
-    channel = CycleChannel
+    topic = CycleTopic
 
 
 class CycleModel2(Model):
-    channel = CycleChannel
+    topic = CycleTopic
 
 
 class CycleActor1(Actor):

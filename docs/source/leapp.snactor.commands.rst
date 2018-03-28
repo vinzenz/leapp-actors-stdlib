@@ -27,10 +27,10 @@ leapp.snactor.commands.new\-actor module
     :undoc-members:
     :show-inheritance:
 
-leapp.snactor.commands.new\-channel module
+leapp.snactor.commands.new\-topic module
 ------------------------------------------
 
-.. automodule:: leapp.snactor.commands.new-channel
+.. automodule:: leapp.snactor.commands.new-topic
     :members:
     :undoc-members:
     :show-inheritance:

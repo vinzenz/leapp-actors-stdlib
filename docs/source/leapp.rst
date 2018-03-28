@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
 
     leapp.actors
-    leapp.channels
+    leapp.topics
     leapp.cli
     leapp.daemon
     leapp.libraries

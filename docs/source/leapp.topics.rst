@@ -1,10 +1,10 @@
-leapp.channels package
+leapp.topics package
 ======================
 
 Module contents
 ---------------
 
-.. automodule:: leapp.channels
+.. automodule:: leapp.topics
     :members:
     :undoc-members:
     :show-inheritance:

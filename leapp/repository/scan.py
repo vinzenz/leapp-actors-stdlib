@@ -12,7 +12,7 @@ def scan_repo(path):
 def scan(repository, path):
     repository.log.debug("Scanning path %s", path)
     scan_tasks = (
-        ('channels', scan_channels),
+        ('topics', scan_topics),
         ('models', scan_models),
         ('actors', scan_actors),
         ('tags', scan_tags),
@@ -29,13 +29,13 @@ def scan(repository, path):
     return repository
 
 
-def scan_channels(repo, path, repo_path):
+def scan_topics(repo, path, repo_path):
     for root, _, files in os.walk(path):
         for module in files:
             _, ext = os.path.splitext(module)
             if ext == '.py':
                 path = os.path.join(root, module)
-                repo.add(DefinitionKind.CHANNEL, os.path.relpath(path, repo_path))
+                repo.add(DefinitionKind.TOPIC, os.path.relpath(path, repo_path))
 
 
 def scan_actors(repo, path, repo_path):
