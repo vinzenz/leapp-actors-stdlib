@@ -1,5 +1,5 @@
-leapp
-=====
+Python documentation for leapp
+==============================
 
 .. toctree::
    :maxdepth: 4

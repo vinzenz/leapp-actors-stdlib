@@ -12,14 +12,14 @@ Welcome to Leapp's documentation!
    than providing their own.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-   :glob:
+    :maxdepth: 2
+    :caption: Contents:
+    :glob:
 
-   tutorials
-   contributing
-   leapp.*
-   modules
+    terminology
+    tutorials
+    contributing
+    modules
 
 
 
