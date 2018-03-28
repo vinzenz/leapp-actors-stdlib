@@ -3,9 +3,7 @@ import os
 
 from leapp.utils.clicmd import command, command_opt
 import leapp.cli.upgrade
-
-__version__ = '0.3'
-
+from leapp import VERSION
 
 @command('')
 @command_opt('debug', is_flag=True, help='Enable debug logging', inherit=True)
@@ -15,7 +13,7 @@ def cli(args):
 
 def main():
     cli.command.add_sub(leapp.cli.upgrade.upgrade.command)
-    parser = argparse.ArgumentParser(prog='leapp', version='leapp version {}'.format(__version__))
+    parser = argparse.ArgumentParser(prog='leapp', version='leapp version {}'.format(VERSION))
     parser.set_defaults(func=None)
     s = parser.add_subparsers(description='Main commands')
     cli.command.apply_parser(s, parser=parser)

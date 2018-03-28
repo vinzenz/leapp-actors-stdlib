@@ -5,9 +5,8 @@ import socket
 from leapp.snactor import commands
 from leapp.snactor.commands import workflow
 from leapp.utils.clicmd import command, command_opt
+from leapp import VERSION
 
-
-__version__ = '1.0'
 SHORT_HELP = "actor-snactor is a leapp actor project management snactor"
 LONG_HELP = """
 This snactor is designed to get quickly started with leapp actor development
@@ -42,7 +41,7 @@ def cli(args):
 def main():
     os.environ['LEAPP_HOSTNAME'] = socket.getfqdn()
     from argparse import ArgumentParser
-    parser = ArgumentParser(prog='snactor', version='snactor version {}'.format(__version__))
+    parser = ArgumentParser(prog='snactor', version='snactor version {}'.format(VERSION))
     parser.set_defaults(func=None)
     s = parser.add_subparsers(description='Main commands')
     load_commands()
