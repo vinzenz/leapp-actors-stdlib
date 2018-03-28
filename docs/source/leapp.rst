@@ -8,8 +8,6 @@ Subpackages
 
     leapp.actors
     leapp.topics
-    leapp.cli
-    leapp.daemon
     leapp.libraries
     leapp.logger
     leapp.messaging

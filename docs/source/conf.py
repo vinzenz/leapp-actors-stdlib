@@ -166,3 +166,20 @@ source_parsers = {
 
 autoclass_content = 'both'
 autodoc_default_flags = ['members', 'undoc-members', 'inherited-members', 'show-inheritance']
+
+
+def filter_unwanted_leapp_types(app, what, name, obj, skip, options):
+    from pprint import pformat
+    with open('/tmp/sphinx-out', 'a+') as f:
+        f.write(pformat([app, what, name, obj, skip, options]) + '\n-----------------------------------------\n')
+    if name.startswith('with_meta_base_') or name == 'mro':
+        return True
+    if name == 'commands' and what == 'module':
+        return True
+    return skip
+
+
+def setup(app):
+    with open('/tmp/sphinx-out', 'w') as f:
+        f.write('')
+    app.connect('autodoc-skip-member', filter_unwanted_leapp_types)

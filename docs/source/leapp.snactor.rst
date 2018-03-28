@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    leapp.snactor.commands
 
 Submodules
 ----------
@@ -19,11 +18,3 @@ leapp.snactor.utils module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: leapp.snactor
-    :members:
-    :undoc-members:
-    :show-inheritance:
